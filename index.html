@@ -1,0 +1,34 @@
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8 /">
+        <title>Test</title>
+    </head>
+    <body>
+        <h1> Lol </h1>
+
+        <input id="input" placeholder="Type something..." />
+        <button onclick="send()"> Submit </button>
+
+        <pre id="output"></pre>
+
+        <script>
+            async function send() {
+                const value = document.getElementById("input").value;
+                const output = document.getElementById("output");
+
+                output.textContent = "Loading...";
+
+                try {
+                    const res = await fetch(`/api/data?query=${encodeURIComponent(value)}`);
+                    const data = await res.json();
+                    output.textContent = JSON.stringify(data, null, 2);
+                } catch (err) {
+                    output.textContent = "Error";
+                }
+            }
+        </script>
+</body>
+</html>
+
