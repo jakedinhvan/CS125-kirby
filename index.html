@@ -2,14 +2,21 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8 /">
+        <meta charset="UTF-8">
         <title>Test</title>
     </head>
     <body>
-        <h1> Lol </h1>
+        <h1> Search by Name </h1>
 
-        <input id="input" placeholder="Type something..." />
+        <input id="input" placeholder="Type an anime name..." />
         <button onclick="send()"> Submit </button>
+
+        <h1> Search by Genre </h1>
+
+        <input id="genreinput" placeholder="Type a genre name..." />
+        <button onclick="sendGenre()"> Submit </button>
+
+
 
         <pre id="output"></pre>
 
@@ -21,13 +28,37 @@
                 output.textContent = "Loading...";
 
                 try {
-                    const res = await fetch(`/api/data?query=${encodeURIComponent(value)}`);
+                    const res = await fetch(`/api/kirby/searchname`, {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json "},
+                        body: JSON.stringify({ query: value})
+                    });
                     const data = await res.json();
                     output.textContent = JSON.stringify(data, null, 2);
                 } catch (err) {
                     output.textContent = "Error";
                 }
             }
+
+            async function sendGenre() {
+                const value = document.getElementById("genreinput").value;
+                const output = document.getElementById("output");
+
+                output.textContent = "Loading...";
+
+                try {
+                    const res = await fetch(`/api/kirby/searchgenre`, {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json "},
+                        body: JSON.stringify({ query: value})
+                    });
+                    const data = await res.json();
+                    output.textContent = JSON.stringify(data, null, 2);
+                } catch (err) {
+                    output.textContent = "Error";
+                }
+            }
+
         </script>
 </body>
 </html>
