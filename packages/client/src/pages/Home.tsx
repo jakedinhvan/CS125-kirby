@@ -1,16 +1,36 @@
 import { Box, TextField } from "@mui/material";
 import { useState } from "react";
+import axios from "axios";
 
 export default function Home() {
   const [query, setQuery] = useState('');
+  const [results, setResults] = useState<any[]>([]); // @todo: zzzzz type results
+  const [loading, setLoading] = useState(false);
 
-  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Search:", query);
+    setLoading(true);
+    setResults([]);
+
+    try {
+      const res = await axios.post('/api/kirby/searchname', { query });
+      setResults(res.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <>
+    <Box sx={{
+      minHeight: "100vh",
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: 2,
+    }}>
       <h1>Welcome to Kirby - an anime suggestion engine</h1> {/* @todo: maybe placeholder lol */}
       <Box
         component="form"
@@ -23,13 +43,22 @@ export default function Home() {
         }}
       >
         <TextField 
-          label="Search anime" 
+          label="Search anime by name" 
           variant="outlined" 
           onChange={(e) => setQuery(e.target.value)}
           fullWidth 
         />
       </Box>
+
+      {results && results.map((anime) => ( // @todo: refactor results into cards
+        <Box key={anime.id}>
+          <h4>{anime.title.romaji}</h4>
+          <p>
+            {anime.genres.join(", ")}
+          </p>
+        </Box>
+      ))}
       
-    </>
+    </Box>
   );
 }
