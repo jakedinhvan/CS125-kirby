@@ -1,9 +1,14 @@
-const axios = require("axios");
+import axios from "axios";
+import { Request, Response } from "express";
 
 // Search anime by name
-async function searchName(req, res) {
-    const query = req.body.query;
-    if (!query) return res.status(400).json( {error: "Query required"});
+export async function searchName(req: Request, res: Response): Promise<void> {
+    const query: string | undefined = req.body.query;
+
+    if (!query) {
+      res.status(400).json( {error: "Query required"});
+      return;
+    }
 
     const graphqlQuery = `
         query ($search: String) {
@@ -36,15 +41,19 @@ async function searchName(req, res) {
         );
 
         res.json(response.data.data.Page.media);
-    } catch (err) {
+    } catch (err: any) {
         res.status(500).json({ error: "External API failed", details: err.message });
     }
 }
 
 // Search anime by gemre
-async function searchGenre(req, res) {
-    const query = req.body.query;
-    if (!query) return res.status(400).json( {error: "Query required"});
+export async function searchGenre(req: Request, res: Response) {
+    const query: string | undefined = req.body.query;
+
+    if (!query) {
+      res.status(400).json( {error: "Query required"});
+      return;
+    }
 
     console.log("Genre: ", query);
 
@@ -74,15 +83,12 @@ async function searchGenre(req, res) {
     try {
         const response = await axios.post(
             "https://graphql.anilist.co",
-            { query: graphqlQuery, variables: { search: query } },
+            { query: graphqlQuery, variables: { genre: query } },
             { headers: { "Content-Type": "application/json" } }
         );
 
         res.json(response.data.data.Page.media);
-    } catch (err) {
+    } catch (err: any) {
         res.status(500).json({ error: "External API failed", details: err.message });
     }
 }
-
-// Export
-module.exports = { searchName, searchGenre};
