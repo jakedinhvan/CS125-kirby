@@ -4,5 +4,11 @@
   "version": "1.0.0",
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "scripts": {
+    "dev": "concurrently -n SERVER,CLIENT -c blue,green \"pnpm --filter kirby-server start\" \"pnpm --filter kirby-client dev\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
 }
