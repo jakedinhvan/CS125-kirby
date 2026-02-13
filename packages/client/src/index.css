@@ -12,8 +12,8 @@ html, body, #root {
   font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #fafafa;
-  color: #212121;
+  background: linear-gradient(180deg,rgba(18, 18, 18, 1) 0%, rgba(38, 50, 56, 1) 50%, rgba(18, 18, 18, 1) 100%);
+  color: #ffffff;
 }
 
 ::-webkit-scrollbar {
