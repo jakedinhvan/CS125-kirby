@@ -6,7 +6,9 @@ settings:
 
 importers:
 
-  .:
+  .: {}
+
+  packages/server:
     dependencies:
       axios:
         specifier: ^1.13.5
