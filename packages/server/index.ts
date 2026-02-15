@@ -4,6 +4,9 @@ import { searchName, searchGenre } from "./controller";
 
 const app = express();
 
+
+console.log("Test");
+
 app.use(express.json()); // for POST request bodies
 app.use(express.static("public")); // serve static files
 

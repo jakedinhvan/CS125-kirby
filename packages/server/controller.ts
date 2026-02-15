@@ -5,6 +5,8 @@ import { Request, Response } from "express";
 export async function searchName(req: Request, res: Response): Promise<void> {
     const query: string | undefined = req.body.query;
 
+    console.log("Received body:", req.body);
+
     if (!query) {
       res.status(400).json( {error: "Query required"});
       return;
