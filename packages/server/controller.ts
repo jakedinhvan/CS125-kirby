@@ -1,6 +1,8 @@
 import axios from "axios";
 import { Request, Response } from "express";
 
+import { users, User } from "./testdb"
+
 // Search anime by name
 export async function searchName(req: Request, res: Response): Promise<void> {
     const query: string | undefined = req.body.query;
@@ -93,4 +95,47 @@ export async function searchGenre(req: Request, res: Response) {
     } catch (err: any) {
         res.status(500).json({ error: "External API failed", details: err.message });
     }
+}
+
+
+// Create new user
+export async function createUser(req: Request, res: Response) {
+  try {
+    const { name, likes } = req.body;
+
+    const newUser = {
+      name,
+      likes,
+    };
+
+    users.push(newUser);
+
+    res.status(201).json(newUser);
+  } catch (err: any) {
+        res.status(500).json({ error: "External API failed", details: err.message });
+    }
+}
+
+// Add liked anime to user
+export async function addLike(req: Request, res: Response) {
+  const { name, likeId } = req.body;
+
+  const user = users.find(u => u.name === name);
+
+  if (!user) {
+    return res.status(404).json({message: "User not found"});
+  }
+
+  if (user.likes.includes(likeId)) {
+    return res.status(400).json({message: "Like already exists"});
+  }
+
+  user.likes.push(likeId);
+
+  return res.status(200).json(user);
+}
+
+// Get all users information
+export async function getUsers(req: Request, res: Response) {
+  res.json(users);
 }
