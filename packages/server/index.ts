@@ -1,14 +1,16 @@
-const express = require("express");
+import express, { Request, Response } from "express";
+import path from "path";
+import { searchName, searchGenre } from "./controller";
 
-const path = require("path");
-const { searchName, searchGenre } = require("./controller.js");
 const app = express();
 
-app.use(express.json()); // for POST request bodies
-// Serve static files
-app.use(express.static("public"));
 
-app.get("/", (req, res) => {
+console.log("Test");
+
+app.use(express.json()); // for POST request bodies
+app.use(express.static("public")); // serve static files
+
+app.get("/", (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
