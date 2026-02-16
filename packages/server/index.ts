@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import path from "path";
-import { searchName, searchGenre, createUser, addLike, getUsers } from "./controller";
+import { searchName, searchGenre, addLike } from "./controller";
 import 'dotenv/config';
 import { drizzle } from 'drizzle-orm/node-postgres';
 
@@ -19,9 +19,7 @@ app.get("/", (req: Request, res: Response) => {
 // POST with different features
 app.post("/api/kirby/searchname", searchName);
 app.post("/api/kirby/searchgenre", searchGenre);
-app.post("/api/kirby/createUser", createUser);
 app.post("/api/kirby/addLike", addLike);
-app.post("/api/kirby/getUsers", getUsers);
 
 app.listen(3000, () => {
   console.log("Server running at http://localhost:3000");

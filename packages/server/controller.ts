@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
-import { users } from "./testdb"
-import { animeGenresTable, animeTable, genresTable } from "./src/db/schema";
+import { animeGenresTable, animeTable, genresTable, likedAnimeTable } from "./src/db/schema";
 import { eq, ilike } from "drizzle-orm";
 import { db } from ".";
 
@@ -92,45 +91,22 @@ export async function searchGenre(req: Request, res: Response) {
     }
 }
 
-
-// Create new user
-export async function createUser(req: Request, res: Response) {
-  try {
-    const { name, likes } = req.body;
-
-    const newUser = {
-      name,
-      likes,
-    };
-
-    users.push(newUser);
-
-    res.status(201).json(newUser);
-  } catch (err: any) {
-        res.status(500).json({ error: "External API failed", details: err.message });
-    }
-}
-
 // Add liked anime to user
 export async function addLike(req: Request, res: Response) {
-  const { name, likeId } = req.body;
+  try {
+    const { likeId } = req.body;
 
-  const user = users.find(u => u.name === name);
+    if (!likeId) {
+      return res.status(400).json({ error: "likeId is required" });
+    }
 
-  if (!user) {
-    return res.status(404).json({message: "User not found"});
+    await db.insert(likedAnimeTable).values({
+      animeId: likeId,
+    });
+
+    return res.status(200).json({ message: "Success" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Failed to add like" });
   }
-
-  if (user.likes.includes(likeId)) {
-    return res.status(400).json({message: "Like already exists"});
-  }
-
-  user.likes.push(likeId);
-
-  return res.status(200).json(user);
-}
-
-// Get all users information
-export async function getUsers(req: Request, res: Response) {
-  res.json(users);
 }
