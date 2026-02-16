@@ -1,4 +1,4 @@
-import { Box, TextField } from "@mui/material";
+import { Box, CircularProgress, TextField } from "@mui/material";
 import { useState } from "react";
 import axios from "axios";
 import type { Anime } from '@kirby/types';
@@ -50,6 +50,12 @@ export default function Home() {
           fullWidth 
         />
       </Box>
+
+      {loading && (
+        <Box sx={{ mt: 3 }}>
+          <CircularProgress />
+        </Box>
+      )}
 
       {results && results.map((anime) => ( // @todo: refactor results into cards
         <Box key={anime.id}>
