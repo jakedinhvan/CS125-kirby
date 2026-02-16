@@ -1,9 +1,19 @@
-import { Card, CardActions, CardContent, Chip, Stack, Typography } from "@mui/material";
+import { Card, CardActions, CardContent, Chip, IconButton, Stack, Typography } from "@mui/material";
 import type { Anime } from "@kirby/types";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import { useState } from "react";
+import axios from "axios";
 
-const AnimeCard = ({ anime }: { anime: Anime }) => {
+const AnimeCard = ({ 
+  anime, 
+  liked, 
+  onToggle,
+}: { 
+  anime: Anime;
+  liked: boolean;
+  onToggle: () => void;
+}) => {
   return (
     <Card variant="outlined" sx={{ width: 480 }}>
       <CardContent>
@@ -34,9 +44,13 @@ const AnimeCard = ({ anime }: { anime: Anime }) => {
         
       </CardContent>
       <CardActions>
-        <Button >
-
-        </Button>
+        <IconButton onClick={onToggle}>
+          {liked ? (
+            <FavoriteIcon color="error" />
+          ) : (
+            <FavoriteBorderIcon />
+          )}
+        </IconButton>
       </CardActions>
     </Card>
   );

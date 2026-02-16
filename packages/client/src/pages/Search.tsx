@@ -15,6 +15,13 @@ export default function Search() {
   const [query, setQuery] = useState(queryParam);
   const [results, setResults] = useState<Anime[]>([]);
   const [loading, setLoading] = useState(false);
+  const [likedIds, setLikedIds] = useState<number[]>([]);
+
+  useEffect(() => {
+    axios.get("/api/liked").then((res) => {
+      setLikedIds(res.data);
+    });
+  }, []);
 
   const handleSearch = async (e?: React.FormEvent<HTMLFormElement>) => {
     e?.preventDefault();
@@ -35,6 +42,23 @@ export default function Search() {
       setLoading(false);
     }
   };
+
+  const handleToggle = async (id: number) => {
+    const prev = likedIds;
+
+    if (prev.includes(id)) {
+      setLikedIds(prev.filter((x) => x !== id));
+    } else {
+      setLikedIds([...prev, id]);
+    }
+
+    try {
+      await axios.post(`/api/kirby/${id}/like`);
+    } catch {
+      setLikedIds(prev);
+    }
+  };
+
 
   useEffect(() => {
     if (queryParam) {
@@ -75,7 +99,7 @@ export default function Search() {
       {loading && <CircularProgress />}
 
       {results.map((anime) => (
-        <AnimeCard key={anime.id} anime={anime} />
+        <AnimeCard key={anime.id} anime={anime} liked={likedIds.includes(anime.id)} onToggle={() => handleToggle(anime.id)} />
       ))}
     </Box>
   );

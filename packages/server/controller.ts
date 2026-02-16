@@ -113,3 +113,9 @@ export async function toggleLike(req: Request, res: Response) {
 
   res.json({ liked: true });
 }
+
+export async function getLiked(req: Request, res: Response) {
+  const liked = await db.select().from(likedAnimeTable);
+
+  res.json(liked.map((a) => a.animeId));
+}
