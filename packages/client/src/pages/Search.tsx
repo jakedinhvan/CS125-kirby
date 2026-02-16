@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import type { Anime } from '@kirby/types';
-import AnimeCard from "../component/AnimeCard";
+import AnimeCard from "../components/AnimeCard";
 
 export default function Search() {
   const location = useLocation();
