@@ -1,9 +1,11 @@
 import express, { Request, Response } from "express";
 import path from "path";
 import { searchName, searchGenre, createUser, addLike, getUsers } from "./controller";
+import 'dotenv/config';
+import { drizzle } from 'drizzle-orm/node-postgres';
 
 const app = express();
-
+export const db = drizzle(process.env.DATABASE_URL!);
 
 console.log("Test");
 

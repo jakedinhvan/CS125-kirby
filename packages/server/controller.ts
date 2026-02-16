@@ -1,5 +1,14 @@
 import axios from "axios";
 import { Request, Response } from "express";
+import type { Anime } from '@kirby/types';
+
+interface AnilistResponse<T> {
+  data: {
+    Page: {
+      media: T[];
+    };
+  };
+}
 
 import { users, User } from "./testdb"
 
@@ -31,6 +40,7 @@ export async function searchName(req: Request, res: Response): Promise<void> {
                   english
                   native
                 }
+                seasonYear
                 genres
                 description
               }
@@ -38,13 +48,14 @@ export async function searchName(req: Request, res: Response): Promise<void> {
         }`;
 
     try {
-        const response = await axios.post(
+        const response = await axios.post<AnilistResponse<Anime>>(
             "https://graphql.anilist.co",
             { query: graphqlQuery, variables: { search: query } },
             { headers: { "Content-Type": "application/json" } }
         );
 
-        res.json(response.data.data.Page.media);
+        const animeRes: Anime[] = response.data.data.Page.media;
+        res.json(animeRes);
     } catch (err: any) {
         res.status(500).json({ error: "External API failed", details: err.message });
     }
@@ -78,6 +89,7 @@ export async function searchGenre(req: Request, res: Response) {
                   english
                   native
                 }
+                seasonYear
                 genres
                 description
               }
@@ -85,13 +97,14 @@ export async function searchGenre(req: Request, res: Response) {
         }`;
 
     try {
-        const response = await axios.post(
+        const response = await axios.post<AnilistResponse<Anime>>(
             "https://graphql.anilist.co",
             { query: graphqlQuery, variables: { genre: query } },
             { headers: { "Content-Type": "application/json" } }
         );
 
-        res.json(response.data.data.Page.media);
+        const animeRes: Anime[] = response.data.data.Page.media;
+        res.json(animeRes);
     } catch (err: any) {
         res.status(500).json({ error: "External API failed", details: err.message });
     }
