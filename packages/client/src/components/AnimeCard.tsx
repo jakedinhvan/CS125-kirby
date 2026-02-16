@@ -1,5 +1,7 @@
-import { Card, CardContent, Chip, Stack, Typography } from "@mui/material";
+import { Card, CardActions, CardContent, Chip, Stack, Typography } from "@mui/material";
 import type { Anime } from "@kirby/types";
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 const AnimeCard = ({ anime }: { anime: Anime }) => {
   return (
@@ -31,6 +33,11 @@ const AnimeCard = ({ anime }: { anime: Anime }) => {
         </Stack>
         
       </CardContent>
+      <CardActions>
+        <Button >
+
+        </Button>
+      </CardActions>
     </Card>
   );
 };

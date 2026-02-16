@@ -8,6 +8,13 @@
       "when": 1771206068274,
       "tag": "0000_spooky_vision",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1771212483948,
+      "tag": "0001_dark_metal_master",
+      "breakpoints": true
     }
   ]
 }

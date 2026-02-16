@@ -92,21 +92,24 @@ export async function searchGenre(req: Request, res: Response) {
 }
 
 // Add liked anime to user
-export async function addLike(req: Request, res: Response) {
-  try {
-    const { likeId } = req.body;
+export async function toggleLike(req: Request, res: Response) {
+  const animeId = Number(req.params.id);
 
-    if (!likeId) {
-      return res.status(400).json({ error: "likeId is required" });
-    }
+  const existing = await db
+    .select()
+    .from(likedAnimeTable)
+    .where(eq(likedAnimeTable.animeId, animeId))
+    .limit(1);
 
-    await db.insert(likedAnimeTable).values({
-      animeId: likeId,
-    });
+  if (existing.length) {
+    await db
+      .delete(likedAnimeTable)
+      .where(eq(likedAnimeTable.animeId, animeId));
 
-    return res.status(200).json({ message: "Success" });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: "Failed to add like" });
+    return res.json({ liked: false });
   }
+
+  await db.insert(likedAnimeTable).values({ animeId });
+
+  res.json({ liked: true });
 }
