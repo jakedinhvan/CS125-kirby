@@ -1,14 +1,8 @@
-import axios from "axios";
 import { Request, Response } from "express";
-import type { Anime } from '@kirby/types';
-
-interface AnilistResponse<T> {
-  data: {
-    Page: {
-      media: T[];
-    };
-  };
-}
+import { users } from "./testdb"
+import { animeGenresTable, animeTable, genresTable } from "./src/db/schema";
+import { eq, ilike } from "drizzle-orm";
+import { db } from ".";
 
 // Search anime by name
 export async function searchName(req: Request, res: Response): Promise<void> {
@@ -21,39 +15,26 @@ export async function searchName(req: Request, res: Response): Promise<void> {
       return;
     }
 
-    const graphqlQuery = `
-        query ($search: String) {
-            Page(page: 1, perPage: 5) {
-              pageInfo {
-                total
-                perPage
-                currentPage
-                lastPage
-                hasNextPage
-              }
-              media(search: $search, type: ANIME) {
-                id
-                title {
-                  romaji
-                  english
-                  native
-                }
-                seasonYear
-                genres
-                description
-              }
-            }
-        }`;
-
     try {
-        const response = await axios.post<AnilistResponse<Anime>>(
-            "https://graphql.anilist.co",
-            { query: graphqlQuery, variables: { search: query } },
-            { headers: { "Content-Type": "application/json" } }
-        );
+        const animeRes = await db
+          .select()
+          .from(animeTable)
+          .where(ilike(animeTable.name, `%${query}%`))
+          .limit(20);
 
-        const animeRes: Anime[] = response.data.data.Page.media;
-        res.json(animeRes);
+        res.json( //@todo: do this better
+          animeRes.map((a) => ({
+            id: a.id,
+            title: {
+              romaji: a.name,
+              english: a.name,
+              native: a.name,
+            },
+            seasonYear: a.seasonYear,
+            genres: [],
+            description: a.description,
+          }))
+        );
     } catch (err: any) {
         res.status(500).json({ error: "External API failed", details: err.message });
     }
@@ -70,40 +51,86 @@ export async function searchGenre(req: Request, res: Response) {
 
     console.log("Genre: ", query);
 
-    const graphqlQuery = `
-        query ($genre: String) {
-            Page(page: 1, perPage: 5) {
-              pageInfo {
-                total
-                perPage
-                currentPage
-                lastPage
-                hasNextPage
-              }
-              media(genre_in: [$genre], type: ANIME) {
-                id
-                title {
-                  romaji
-                  english
-                  native
-                }
-                seasonYear
-                genres
-                description
-              }
-            }
-        }`;
-
     try {
-        const response = await axios.post<AnilistResponse<Anime>>(
-            "https://graphql.anilist.co",
-            { query: graphqlQuery, variables: { genre: query } },
-            { headers: { "Content-Type": "application/json" } }
-        );
+      const rows = await db //@todo: do this better
+        .select({
+          id: animeTable.id,
+          name: animeTable.name,
+          seasonYear: animeTable.seasonYear,
+          description: animeTable.description,
+        })
+        .from(animeTable)
+        .innerJoin(
+          animeGenresTable,
+          eq(animeTable.id, animeGenresTable.animeId)
+        )
+        .innerJoin(
+          genresTable,
+          eq(animeGenresTable.genreId, genresTable.id)
+        )
+        .where(ilike(genresTable.name, `%${query}%`))
+        .limit(20);
 
-        const animeRes: Anime[] = response.data.data.Page.media;
-        res.json(animeRes);
+      res.json(
+        rows.map((a) => ({
+          id: a.id,
+          title: {
+            romaji: a.name,
+            english: a.name,
+            native: a.name,
+          },
+          seasonYear: a.seasonYear,
+          genres: [query], 
+          description: a.description,
+        }))
+      );
     } catch (err: any) {
+      res.status(500).json({
+        error: "Database query failed",
+        details: err.message,
+      });
+    }
+}
+
+
+// Create new user
+export async function createUser(req: Request, res: Response) {
+  try {
+    const { name, likes } = req.body;
+
+    const newUser = {
+      name,
+      likes,
+    };
+
+    users.push(newUser);
+
+    res.status(201).json(newUser);
+  } catch (err: any) {
         res.status(500).json({ error: "External API failed", details: err.message });
     }
+}
+
+// Add liked anime to user
+export async function addLike(req: Request, res: Response) {
+  const { name, likeId } = req.body;
+
+  const user = users.find(u => u.name === name);
+
+  if (!user) {
+    return res.status(404).json({message: "User not found"});
+  }
+
+  if (user.likes.includes(likeId)) {
+    return res.status(400).json({message: "Like already exists"});
+  }
+
+  user.likes.push(likeId);
+
+  return res.status(200).json(user);
+}
+
+// Get all users information
+export async function getUsers(req: Request, res: Response) {
+  res.json(users);
 }
