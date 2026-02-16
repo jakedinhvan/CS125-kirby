@@ -1,27 +1,15 @@
-import { Box, CircularProgress, TextField } from "@mui/material";
+import { Box, TextField } from "@mui/material";
 import { useState } from "react";
-import axios from "axios";
-import type { Anime } from '@kirby/types';
-import AnimeCard from "../component/AnimeCard";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<Anime[]>([]);
-  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
-    setResults([]);
-
-    try {
-      const res = await axios.post('/api/kirby/searchname', { query });
-      setResults(res.data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+    if (!query) return;
+    navigate(`/search?q=${encodeURIComponent(query)}`);
   };
 
   return (
@@ -47,21 +35,11 @@ export default function Home() {
         <TextField 
           label="Search anime by name" 
           variant="outlined" 
+          value={query}
           onChange={(e) => setQuery(e.target.value)}
           fullWidth 
         />
       </Box>
-
-      {loading && (
-        <Box sx={{ mt: 3 }}>
-          <CircularProgress />
-        </Box>
-      )}
-
-      {results && results.map((anime) => ( // @todo: refactor results into cards
-        <AnimeCard anime={anime} />
-      ))}
-      
     </Box>
   );
 }

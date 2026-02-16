@@ -21,7 +21,7 @@ const Navbar = () => {
     });
 
     return (
-            <Box sx={{ borderBottom: 1, borderColor: 'divider', position: 'fixed', top: 0, left: 0, width: '100%', zIndex: 1100 }}>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider', position: 'fixed', top: 0, left: 0, width: '100%', zIndex: 1100, backgroundColor: 'background.paper' }}>
                 <Box sx={{ maxWidth: 1100, mx: 'auto', display: 'flex', alignItems: 'center', px: 2, gap: 1, height: 64 }}>
                     <Button component={Link} to="/" sx={getButtonStyle('/')} startIcon={<Home />}>Home</Button>
                     <Button component={Link} to="/browse" sx={getButtonStyle('/browse')} startIcon={<VideoLibrary />}>Browse</Button>
