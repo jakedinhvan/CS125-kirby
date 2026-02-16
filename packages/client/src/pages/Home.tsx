@@ -1,10 +1,11 @@
 import { Box, TextField } from "@mui/material";
 import { useState } from "react";
 import axios from "axios";
+import type { Anime } from '@kirby/types';
 
 export default function Home() {
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<any[]>([]); // @todo: zzzzz type results
+  const [results, setResults] = useState<Anime[]>([]);
   const [loading, setLoading] = useState(false);
 
   const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
