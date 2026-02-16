@@ -60,13 +60,6 @@ export default function Home() {
 
       {results && results.map((anime) => ( // @todo: refactor results into cards
         <AnimeCard anime={anime} />
-        
-        // <Box key={anime.id}>
-        //   <h4>{anime.title.romaji}</h4>
-        //   <p>
-        //     {anime.genres.join(", ")}
-        //   </p>
-        // </Box>
       ))}
       
     </Box>

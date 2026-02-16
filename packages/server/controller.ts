@@ -38,6 +38,7 @@ export async function searchName(req: Request, res: Response): Promise<void> {
                   english
                   native
                 }
+                seasonYear
                 genres
                 description
               }
@@ -86,6 +87,7 @@ export async function searchGenre(req: Request, res: Response) {
                   english
                   native
                 }
+                seasonYear
                 genres
                 description
               }

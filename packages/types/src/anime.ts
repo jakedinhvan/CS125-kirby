@@ -7,6 +7,7 @@ export interface AnimeTitle {
 export interface Anime {
   id: number;
   title: AnimeTitle;
+  seasonYear: number;
   genres: string[];
   description?: string;
 }

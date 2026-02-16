@@ -3,8 +3,11 @@ import type { Anime } from "@kirby/types";
 
 const AnimeCard = ({ anime }: { anime: Anime }) => {
   return (
-    <Card variant="outlined" sx={{ maxWidth: 480 }}>
+    <Card variant="outlined" sx={{ width: 480 }}>
       <CardContent>
+        <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
+          {anime.seasonYear}
+        </Typography>
         <Typography variant="h5" component="div" gutterBottom>
           {anime.title.romaji || anime.title.english || "Untitled?"}
         </Typography>
