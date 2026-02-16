@@ -2,6 +2,7 @@ import { Box, CircularProgress, TextField } from "@mui/material";
 import { useState } from "react";
 import axios from "axios";
 import type { Anime } from '@kirby/types';
+import AnimeCard from "../component/AnimeCard";
 
 export default function Home() {
   const [query, setQuery] = useState('');
@@ -58,12 +59,14 @@ export default function Home() {
       )}
 
       {results && results.map((anime) => ( // @todo: refactor results into cards
-        <Box key={anime.id}>
-          <h4>{anime.title.romaji}</h4>
-          <p>
-            {anime.genres.join(", ")}
-          </p>
-        </Box>
+        <AnimeCard anime={anime} />
+        
+        // <Box key={anime.id}>
+        //   <h4>{anime.title.romaji}</h4>
+        //   <p>
+        //     {anime.genres.join(", ")}
+        //   </p>
+        // </Box>
       ))}
       
     </Box>
