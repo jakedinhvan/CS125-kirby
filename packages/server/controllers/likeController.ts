@@ -26,3 +26,30 @@ export async function getLiked(req: Request, res: Response) {
     });
   }
 }
+
+
+export async function toggleGenreLike(req: Request, res: Response) {
+  const genreId = Number(req.params.id);
+
+  try {
+    const liked = await likeService.toggleGenreLike(genreId);
+    res.json({ liked });
+  } catch (err: any) {
+    res.status(500).json({
+      error: "Toggle Genre failed",
+      details: err.message,
+    });
+  }
+}
+
+export async function getGenreLiked(req: Request, res: Response) {
+  try {
+    const liked = await likeService.getGenreLiked();
+    res.json(liked);
+  } catch (err: any) {
+    res.status(500).json({
+      error: "Fetch Genre failed",
+      details: err.message,
+    });
+  }
+}

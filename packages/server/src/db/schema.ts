@@ -23,3 +23,10 @@ export const likedAnimeTable = pgTable("liked_anime", {
     .references(() => animeTable.id, { onDelete: "cascade" })
     .primaryKey(),
 });
+
+export const likedGenreTable = pgTable("liked_genre", {
+  genreId: integer()
+    .notNull()
+    .references(() => genresTable.id, { onDelete: "cascade" })
+    .primaryKey(),
+});
