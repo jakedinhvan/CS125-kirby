@@ -1,11 +1,12 @@
-import type { Genre } from "@kirby/types";
-import { Box, Typography, Paper, Autocomplete, TextField } from "@mui/material";
+import type { Anime, Genre } from "@kirby/types";
+import { Box, Typography, Paper, Autocomplete, TextField, Table, TableHead, TableRow, TableCell, TableBody } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
 export default function Profile() {
   const [genres, setGenres] = useState<Genre[]>([]);
   const [likedGenres, setLikedGenres] = useState<Genre[]>([]);
+  const [likedAnime, setLikedAnime] = useState<Anime[]>([]);
 
 
   useEffect(() => {
@@ -24,6 +25,14 @@ export default function Profile() {
         setLikedGenres(likedObjects);
       });
 }, [genres]);
+
+  useEffect(() => {
+    axios.get("/api/kirby/liked-anime").then((res) => {
+      setLikedAnime(res.data);
+    }).catch((err) => {
+      console.error("failed to fetch liked anime", err);
+    });
+  }, []);
 
   const handleChange = async (
     event: any,
@@ -116,9 +125,20 @@ export default function Profile() {
           }}
         >
           <Typography variant="h6">Liked Anime</Typography>
-          <Typography color="text.secondary">
-            Blah blah blah liked anime here...
-          </Typography>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {likedAnime.map((a) => (
+                <TableRow key={a.id}>
+                  <TableCell>{a.name}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </Paper>
       </Box>
     </Box>
