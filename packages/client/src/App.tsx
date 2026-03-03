@@ -3,6 +3,7 @@ import Home from "./pages/Home";
 import Search from "./pages/Search";
 import Navbar from "./components/Navbar";
 import Browse from "./pages/Browse";
+import Profile from "./pages/Profile";
 
 export default function App() {
   return (
@@ -12,6 +13,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/browse" element={<Browse />} />
         <Route path="/search" element={<Search />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </BrowserRouter>
   );
