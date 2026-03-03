@@ -18,7 +18,7 @@ export default function Search() {
   const [likedIds, setLikedIds] = useState<number[]>([]);
 
   useEffect(() => {
-    axios.get("/api/liked").then((res) => {
+    axios.get("/api/kirby/liked").then((res) => {
       setLikedIds(res.data);
     });
   }, []);
