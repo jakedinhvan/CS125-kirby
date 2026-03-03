@@ -1,13 +1,11 @@
 import express, { Request, Response } from "express";
 import path from "path";
-import { searchName, searchGenre, toggleLike, getLiked } from "./controller";
 import 'dotenv/config';
 import { drizzle } from 'drizzle-orm/node-postgres';
+import animeRoutes from "./routes/animeRoutes";
 
 const app = express();
 export const db = drizzle(process.env.DATABASE_URL!);
-
-console.log("Test");
 
 app.use(express.json()); // for POST request bodies
 app.use(express.static("public")); // serve static files
@@ -17,10 +15,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 // POST with different features
-app.post("/api/kirby/searchname", searchName);
-app.post("/api/kirby/searchgenre", searchGenre);
-app.post("/api/kirby/:id/like", toggleLike);
-app.get("/api/liked", getLiked);
+app.use("/api/kirby", animeRoutes)
 
 app.listen(3000, () => {
   console.log("Server running at http://localhost:3000");

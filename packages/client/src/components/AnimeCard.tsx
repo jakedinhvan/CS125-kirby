@@ -2,8 +2,6 @@ import { Card, CardActions, CardContent, Chip, IconButton, Stack, Typography } f
 import type { Anime } from "@kirby/types";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import { useState } from "react";
-import axios from "axios";
 
 const AnimeCard = ({ 
   anime, 
