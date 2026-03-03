@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import * as likeService from '../services/likeService';
-import * as genreService from '../services/genreService';
 
 export async function toggleLike(req: Request, res: Response) {
   const animeId = Number(req.params.id);
@@ -29,28 +28,3 @@ export async function getLiked(req: Request, res: Response) {
 }
 
 
-export async function toggleGenreLike(req: Request, res: Response) {
-  const genreId = Number(req.params.id);
-
-  try {
-    const liked = await genreService.toggleGenreLike(genreId);
-    res.json({ liked });
-  } catch (err: any) {
-    res.status(500).json({
-      error: "Toggle Genre failed",
-      details: err.message,
-    });
-  }
-}
-
-export async function getGenreLiked(req: Request, res: Response) {
-  try {
-    const liked = await genreService.getGenreLiked();
-    res.json(liked);
-  } catch (err: any) {
-    res.status(500).json({
-      error: "Fetch Genre failed",
-      details: err.message,
-    });
-  }
-}

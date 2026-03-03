@@ -9,7 +9,7 @@ export async function getAllGenres(): Promise<Genre[]> {
   return genres;
 }
 
-export async function toggleGenreLike(genreId: number) {
+export async function likeGenre(genreId: number) {
   const existing = await db
     .select()
     .from(likedGenreTable)

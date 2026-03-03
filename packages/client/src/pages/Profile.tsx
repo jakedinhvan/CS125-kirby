@@ -1,5 +1,5 @@
 import type { Genre } from "@kirby/types";
-import { Box, Typography, Paper } from "@mui/material";
+import { Box, Typography, Paper, Autocomplete, TextField } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
@@ -41,10 +41,21 @@ export default function Profile() {
             borderRadius: 3,
           }}
         >
-          <Typography variant="h6">Liked Genres</Typography>
-          <Typography color="text.secondary">
-            Blah blah blah liked genres here...
-          </Typography>
+          <Typography variant="h6">Genres</Typography>
+          <Autocomplete
+            multiple
+            options={genres}
+            getOptionLabel={(genre) => genre.name}
+            renderInput={(params) => (
+              <TextField
+                variant="outlined"
+                placeholder="Start typing to add genres..."
+                {...params}
+              />
+            )}
+          >
+
+          </Autocomplete>
         </Paper>
 
         <Paper

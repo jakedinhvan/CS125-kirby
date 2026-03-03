@@ -65,7 +65,7 @@ export default function Search() {
       setQuery(queryParam);
       handleSearch();
     }
-  }, [queryParam]);
+  }, [queryParam, handleSearch]);
 
   return (
     <Box sx={{
