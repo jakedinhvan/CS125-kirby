@@ -24,11 +24,16 @@ export async function searchByName(query: string) {
         seasonYear: animeTable.seasonYear,
         description: animeTable.description,
         genreId: animeGenresTable.genreId,
+        genreName: genresTable.name,
       })
       .from(animeTable)
       .leftJoin(
         animeGenresTable,
         eq(animeTable.id, animeGenresTable.animeId)
+      )
+      .leftJoin(
+        genresTable,
+        eq(animeGenresTable.genreId, genresTable.id)
       )
       .where(ilike(animeTable.name, `%${query}%`))
       .limit(50); // larger pool for better scoring
@@ -44,6 +49,7 @@ export async function searchByName(query: string) {
           seasonYear: row.seasonYear,
           description: row.description,
           genreIds: [],
+          genres: [],
           matchScore: 0,
         });
       }
@@ -57,6 +63,10 @@ export async function searchByName(query: string) {
         if (likedGenreIds.includes(row.genreId)) {
           anime.matchScore += 1; // increment per shared genre
         }
+      }
+
+      if (row.genreName && !anime.genres.includes(row.genreName)) {
+        anime.genres.push(row.genreName);
       }
     }
 
@@ -72,7 +82,7 @@ export async function searchByName(query: string) {
         native: a.name,
       },
       seasonYear: a.seasonYear,
-      genres: [],
+      genres: a.genres,
       description: a.description,
     }));        
 }
