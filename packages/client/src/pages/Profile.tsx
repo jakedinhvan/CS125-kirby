@@ -1,6 +1,17 @@
+import type { Genre } from "@kirby/types";
 import { Box, Typography, Paper } from "@mui/material";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 export default function Profile() {
+  const [genres, setGenres] = useState<Genre[]>([]);
+
+  useEffect(() => {
+    axios.get("/api/kirby/genres").then((res) => {
+      setGenres(res.data);
+    })
+  }, []);
+  
   return (
     <Box
       sx={{

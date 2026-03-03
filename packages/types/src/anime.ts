@@ -11,3 +11,8 @@ export interface Anime {
   genres: string[];
   description?: string;
 }
+
+export interface Genre {
+  id: number;
+  name: string;
+}

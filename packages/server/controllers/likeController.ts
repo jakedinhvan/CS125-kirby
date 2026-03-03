@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import * as likeService from '../services/likeService';
+import * as genreService from '../services/genreService';
 
 export async function toggleLike(req: Request, res: Response) {
   const animeId = Number(req.params.id);
@@ -32,7 +33,7 @@ export async function toggleGenreLike(req: Request, res: Response) {
   const genreId = Number(req.params.id);
 
   try {
-    const liked = await likeService.toggleGenreLike(genreId);
+    const liked = await genreService.toggleGenreLike(genreId);
     res.json({ liked });
   } catch (err: any) {
     res.status(500).json({
@@ -44,7 +45,7 @@ export async function toggleGenreLike(req: Request, res: Response) {
 
 export async function getGenreLiked(req: Request, res: Response) {
   try {
-    const liked = await likeService.getGenreLiked();
+    const liked = await genreService.getGenreLiked();
     res.json(liked);
   } catch (err: any) {
     res.status(500).json({

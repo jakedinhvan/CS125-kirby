@@ -27,30 +27,3 @@ export async function getLiked() {
 
   return liked.map((a) => a.animeId);
 }
-
-export async function toggleGenreLike(genreId: number) {
-  const existing = await db
-    .select()
-    .from(likedGenreTable)
-    .where(eq(likedGenreTable.genreId, genreId))
-    .limit(1);
-
-  if (existing.length) {
-    await db
-      .delete(likedGenreTable)
-      .where(eq(likedGenreTable.genreId, genreId));
-
-    return false;
-  }
-
-  await db.insert(likedGenreTable).values({ genreId });
-
-  return true;
-
-}
-
-export async function getGenreLiked() {
-  const liked = await db.select().from(likedGenreTable);
-
-  return liked.map((g) => g.genreId);
-}
