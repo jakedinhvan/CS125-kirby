@@ -43,19 +43,29 @@ async function fetchPage(page: number): Promise<Anime[]> {
       }
     }
   `;
+  try {
+    const response = await axios.post<AniListResponse>(
+      ANILIST_URL,
+      {
+        query,
+        variables: { page },
+      },
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
 
-  const response = await axios.post<AniListResponse>(
-    ANILIST_URL,
-    {
-      query,
-      variables: { page },
-    },
-    {
-      headers: { "Content-Type": "application/json" },
+    return response.data.data.Page.media;
+
+  } catch (err: any) {
+    if (err.response?.status === 429) {
+      console.log("Rate limited. Waiting 10 seconds...");
+      await sleep(10000);
+      return fetchPage(page);
     }
-  );
-
-  return response.data.data.Page.media;
+    throw err;
+  }
+  
 }
 
 async function fetch() {
@@ -128,7 +138,7 @@ async function fetch() {
     }
 
     page++;
-    await sleep(400); // rate limit
+    await sleep(1000); 
   }
 
   console.log("Done fetching");
