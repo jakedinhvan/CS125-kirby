@@ -27,4 +27,16 @@ export async function getLiked(req: Request, res: Response) {
   }
 }
 
+export async function getLikedAnime(req: Request, res: Response) {
+  try {
+    const liked = await likeService.getLikedAnime();
+    res.json(liked);
+  } catch (err: any) {
+    res.status(500).json({
+      error: "Fetch failed",
+      details: err.message,
+    });
+  }
+}
+
 

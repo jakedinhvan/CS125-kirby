@@ -15,7 +15,7 @@ export async function getGenres(req: Request, res: Response){
 }
 
 export async function likeGenre(req: Request, res: Response) {
-  const genreId = Number(req.params.id);
+  const genreId = Number(req.body.genreId);
 
   try {
     const liked = await genreService.likeGenre(genreId);
@@ -28,7 +28,7 @@ export async function likeGenre(req: Request, res: Response) {
   }
 }
 
-export async function getGenreLiked(req: Request, res: Response) {
+export async function getLikedGenres(req: Request, res: Response) {
   try {
     const liked = await genreService.getGenreLiked();
     res.json(liked);
