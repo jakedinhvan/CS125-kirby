@@ -38,3 +38,7 @@ export async function searchGenre(req: Request, res: Response) {
       });
     }
 }
+
+// export async function getAnimeById(req: Request, res: Response){
+
+// }

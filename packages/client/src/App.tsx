@@ -4,6 +4,7 @@ import Search from "./pages/Search";
 import Navbar from "./components/Navbar";
 import Browse from "./pages/Browse";
 import Profile from "./pages/Profile";
+import AnimePage from "./pages/AnimePage";
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
         <Route path="/browse" element={<Browse />} />
         <Route path="/search" element={<Search />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/anime/:id" element={<AnimePage />} />
       </Routes>
     </BrowserRouter>
   );

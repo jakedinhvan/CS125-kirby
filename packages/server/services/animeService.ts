@@ -1,6 +1,7 @@
 import { eq, ilike } from "drizzle-orm";
 import { db } from "..";
 import { animeGenresTable, animeTable, genresTable, likedAnimeTable } from "../src/db/schema";
+import { Anime } from "@kirby/types";
 
 export async function searchByName(query: string) {
     // gets all liked genres
@@ -185,3 +186,13 @@ export async function searchByGenre(query: string) {
     description: a.description,
   }));
 }
+
+// export async function getAnimeById(id: number): Anime {
+//   const rows = await db
+//     .select()
+//     .from(animeTable)
+//     .where(eq(animeTable.id, id))
+//     .limit(1);
+
+//   return rows;
+// }

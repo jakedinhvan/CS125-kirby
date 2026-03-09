@@ -1,4 +1,4 @@
-import { Card, CardActions, CardContent, Chip, IconButton, Stack, Typography } from "@mui/material";
+import { Card, CardActions, CardContent, Chip, IconButton, Link, Stack, Typography } from "@mui/material";
 import type { Anime } from "@kirby/types";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -19,7 +19,7 @@ const AnimeCard = ({
           {anime.seasonYear}
         </Typography>
         <Typography variant="h5" component="div" gutterBottom>
-          {anime.title.romaji || anime.title.english || "Untitled?"}
+          <Link href={`/anime/${anime.id}`}>{anime.title.romaji || anime.title.english || "Untitled?"}</Link>
         </Typography>
 
         <Typography variant="body2"
