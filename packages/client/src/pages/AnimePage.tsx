@@ -1,8 +1,9 @@
+import type { Anime } from "@kirby/types";
 import { Box, Typography } from "@mui/material";
-import { useParams } from "react-router-dom";
+import { useLoaderData } from "react-router-dom";
 
 export default function AnimePage(){
-  const { id } = useParams();
+  const anime = useLoaderData() as Anime;
 
   return (
     <Box
@@ -23,7 +24,7 @@ export default function AnimePage(){
         }}
       >
         <Typography variant="h4" fontWeight="bold">
-          {id}
+          {anime.title.english} ({anime.id})
         </Typography>
       </Box>
     </Box>
