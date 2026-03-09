@@ -187,12 +187,29 @@ export async function searchByGenre(query: string) {
   }));
 }
 
-// export async function getAnimeById(id: number): Anime {
-//   const rows = await db
-//     .select()
-//     .from(animeTable)
-//     .where(eq(animeTable.id, id))
-//     .limit(1);
+export async function searchById(id: number): Promise<Anime | null> {
+  const anime = await db.query.animeTable.findFirst({
+    where: (anime, { eq }) => eq(anime.id, id),
+    with: {
+      animeGenres: {
+        with: {
+          genre: true,
+        }
+      }
+    }
+  });
 
-//   return rows;
-// }
+  if (!anime) return null;
+
+  return {
+    id: anime.id,
+    title: { // @todo: maybe we should just refactor the type to just one name lol
+      romaji: anime.name,
+      english: anime.name,
+      native: anime.name,
+    },
+    seasonYear: anime.seasonYear || 1800,
+    description: anime.description,
+    genres: anime.animeGenres.map((ag) => ag.genre.name),
+  }
+}

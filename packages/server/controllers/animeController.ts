@@ -39,6 +39,21 @@ export async function searchGenre(req: Request, res: Response) {
     }
 }
 
-// export async function getAnimeById(req: Request, res: Response){
+export async function getAnimeById(req: Request, res: Response){
+  const id = Number(req.params.id);
 
-// }
+  if (!id) {
+    res.status(400).json( {error: "ID required in query"});
+    return;
+  }
+
+  try {
+    const results = await animeService.searchById(id);
+    res.json(results);
+  } catch (err: any) {
+    res.status(500).json({
+      error: "Search by ID failed",
+      details: err.message,
+    });
+  }
+}

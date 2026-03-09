@@ -4,9 +4,10 @@ import 'dotenv/config';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import animeRoutes from "./routes/animeRoutes";
 import genreRoutes from "./routes/genreRoutes";
+import * as schema from "./src/db/schema";
 
 const app = express();
-export const db = drizzle(process.env.DATABASE_URL!);
+export const db = drizzle(process.env.DATABASE_URL!, { schema });
 
 app.use(express.json()); // for POST request bodies
 app.use(express.static("public")); // serve static files
