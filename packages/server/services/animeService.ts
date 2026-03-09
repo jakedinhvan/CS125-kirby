@@ -87,6 +87,71 @@ export async function searchByName(query: string) {
     }));        
 }
 
+export async function searchByNameBaseRoute(query: string) {
+    // gets all of only the search query
+    const animeSearch = await db
+      .select({
+        id: animeTable.id,
+        name: animeTable.name,
+        seasonYear: animeTable.seasonYear,
+        description: animeTable.description,
+        genreId: animeGenresTable.genreId,
+        genreName: genresTable.name,
+      })
+      .from(animeTable)
+      .leftJoin(
+        animeGenresTable,
+        eq(animeTable.id, animeGenresTable.animeId)
+      )
+      .leftJoin(
+        genresTable,
+        eq(animeGenresTable.genreId, genresTable.id)
+      )
+      .where(ilike(animeTable.name, `%${query}%`))
+      .limit(50); // larger pool for better scoring
+
+
+    const grouped = new Map<number, any>();
+    // combines like info and search info
+    for (const row of animeSearch) {
+      if (!grouped.has(row.id)) {
+        grouped.set(row.id, {
+          id: row.id,
+          name: row.name,
+          seasonYear: row.seasonYear,
+          description: row.description,
+          genreIds: [],
+          genres: [],
+        });
+      }
+
+      const anime = grouped.get(row.id);
+
+      // adding to genreId + genres
+      if (row.genreId) {
+        anime.genreIds.push(row.genreId);
+      }
+
+      if (row.genreName && !anime.genres.includes(row.genreName)) {
+        anime.genres.push(row.genreName);
+      }
+    }
+
+    const animeRes = Array.from(grouped.values());
+
+
+    return animeRes.map((a) => ({
+        id: a.id,
+        title: {
+          romaji: a.name,
+          english: a.name,
+          native: a.name,
+        },
+        seasonYear: a.seasonYear,
+        genres: a.genres,
+        description: a.description,
+      }));
+}
 
 export async function searchByGenre(query: string) {
   const rows = await db //@todo: do this better
