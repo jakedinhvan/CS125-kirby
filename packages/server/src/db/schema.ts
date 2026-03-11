@@ -25,6 +25,13 @@ export const likedAnimeTable = pgTable("liked_anime", {
     .primaryKey(),
 });
 
+export const visitedPageTable = pgTable("visited_page", {
+  animeId: integer()
+    .notNull()
+    .references(() => animeTable.id, { onDelete: "cascade" })
+    .primaryKey(),
+});
+
 export const likedGenreTable = pgTable("liked_genre", {
   genreId: integer()
     .notNull()
