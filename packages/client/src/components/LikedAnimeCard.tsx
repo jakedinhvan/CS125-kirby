@@ -1,4 +1,4 @@
-import { Box, Chip, IconButton, Link, Stack } from "@mui/material";
+import { Box, Card, CardActions, CardContent, Chip, IconButton, Link, Stack } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import type { Anime } from "@kirby/types";
 import axios from "axios";
@@ -21,17 +21,8 @@ export default function LikedAnimeCard({ anime, onRemove }: LikedAnimeCardProps)
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        p: 2,
-        border: "1px solid #eee",
-        borderRadius: 2,
-      }}
-    >
-      <Box>
+    <Card variant="outlined">
+      <CardContent>
         <Link
           href={`/anime/${anime.id}`}
           underline="hover"
@@ -45,11 +36,13 @@ export default function LikedAnimeCard({ anime, onRemove }: LikedAnimeCardProps)
             <Chip key={genre} label={genre} size="small" />
           ))}
         </Stack>
-      </Box>
-
-      <IconButton onClick={handleUnlike}>
-        <FavoriteIcon color="error" />
-      </IconButton>
-    </Box>
+      </CardContent>
+      
+      <CardActions sx={{ marginTop: -2 }}>
+        <IconButton onClick={handleUnlike}>
+          <FavoriteIcon color="error" />
+        </IconButton>
+      </CardActions>
+    </Card>
   );
 }
