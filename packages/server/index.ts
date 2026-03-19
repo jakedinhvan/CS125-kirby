@@ -4,6 +4,7 @@ import 'dotenv/config';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import animeRoutes from "./routes/animeRoutes";
 import genreRoutes from "./routes/genreRoutes";
+import likeRoutes from "./routes/likeRoutes";
 import * as schema from "./src/db/schema";
 
 const app = express();
@@ -17,8 +18,9 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 // POST with different features
-app.use("/api/kirby", animeRoutes); // @todo: probably rename these 
-app.use('/api/kirby', genreRoutes);
+app.use("/api/anime", animeRoutes); 
+app.use('/api/genres', genreRoutes);
+app.use('/api/likes', likeRoutes);
 
 app.listen(3000, () => {
   console.log("Server running at http://localhost:3000");

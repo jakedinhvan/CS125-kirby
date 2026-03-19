@@ -18,7 +18,7 @@ export default function Search() {
   const [likedIds, setLikedIds] = useState<number[]>([]);
 
   useEffect(() => {
-    axios.get("/api/kirby/liked").then((res) => {
+    axios.get("/api/likes/").then((res) => {
       setLikedIds(res.data);
     });
   }, []);
@@ -34,7 +34,7 @@ export default function Search() {
     setResults([]);
 
     try {
-      const res = await axios.post('/api/kirby/searchname', { query });
+      const res = await axios.post('/api/anime/search/name', { query });
       setResults(res.data);
     } catch (err) {
       console.error(err);
@@ -53,7 +53,7 @@ export default function Search() {
     }
 
     try {
-      await axios.post(`/api/kirby/${id}/like`);
+      await axios.post(`/api/likes/anime/${id}`);
     } catch {
       setLikedIds(prev);
     }

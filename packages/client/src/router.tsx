@@ -17,7 +17,7 @@ export const router = createBrowserRouter([
       {
         path: "/anime/:id",
         loader: async ({ params }) => {
-          const res = await fetch(`/api/kirby/${params.id}`);
+          const res = await fetch(`/api/anime/${params.id}`);
           return res.json();
         },
         element: <AnimePage />,

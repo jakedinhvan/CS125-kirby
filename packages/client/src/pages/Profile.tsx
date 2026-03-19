@@ -10,13 +10,13 @@ export default function Profile() {
 
 
   useEffect(() => {
-    axios.get("/api/kirby/genres").then((res) => {
+    axios.get("/api/genres/").then((res) => {
       setGenres(res.data);
     })
   }, []);
 
   useEffect(() => {
-    fetch("/api/kirby/liked-genres")
+    fetch("/api/genres/liked")
       .then(res => res.json())
       .then((likedIds: number[]) => {
         const likedObjects = genres.filter(g =>
@@ -27,7 +27,7 @@ export default function Profile() {
 }, [genres]);
 
   useEffect(() => {
-    axios.get("/api/kirby/liked-anime").then((res) => {
+    axios.get("/api/likes/anime").then((res) => {
       setLikedAnime(res.data);
     }).catch((err) => {
       console.error("failed to fetch liked anime", err);
@@ -47,7 +47,7 @@ export default function Profile() {
     );
 
     for (const genre of added) {
-      await fetch(`/api/kirby/like-genre`, {
+      await fetch(`/api/genre/like`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -57,7 +57,7 @@ export default function Profile() {
     }
 
     for (const genre of removed) {
-      await fetch(`/api/kirby/like-genre`, {
+      await fetch(`/api/genre/like`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

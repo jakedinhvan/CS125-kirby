@@ -3,8 +3,8 @@ import { getGenres, getLikedGenres, likeGenre } from "../controllers/genreContro
 
 const router = Router();
 
-router.get("/genres", getGenres);
-router.get("/liked-genres", getLikedGenres);
-router.post("/like-genre", likeGenre);
+router.get("/", getGenres);
+router.get("/liked", getLikedGenres);
+router.post("/like", likeGenre);
 
 export default router;
