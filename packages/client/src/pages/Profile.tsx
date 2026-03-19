@@ -4,6 +4,8 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import AnimeCard from "../components/AnimeCard";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import LikedAnimeCard from "../components/LikedAnimeCard";
+import { AnimationOutlined } from "@mui/icons-material";
 
 export default function Profile() {
   const [genres, setGenres] = useState<Genre[]>([]);
@@ -127,66 +129,15 @@ export default function Profile() {
           }}
         >
           <Typography variant="h6">Liked Anime</Typography>
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
-                {likedAnime.map((anime) => {
-                  const genres = anime.genres?.slice(0,3) ?? [];
-
-                  return (
-                    <Box
-                      key={anime.id}
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        p: 2,
-                        border: "1px solid #eee",
-                        borderRadius: 2,
-                      }}
-                    >
-                      <Box>
-                        <Link
-                          href={`/anime/${anime.id}`}
-                          underline="hover"
-                          sx={{ fontSize: "1.1rem", fontWeight: 500 }}
-                        >
-                          {anime.name}
-                        </Link>
-
-                        <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-                          {genres.map((genre) => (
-                            <Chip key={genre} label={genre} size="small" />
-                          ))}
-                        </Stack>
-                      </Box>
-
-                      <IconButton
-                        onClick={async () => {
-                          try {
-                            await axios.post(`/api/kirby/${anime.id}/like`);
-                            setLikedAnime((prev) =>
-                              prev.filter((a) => a.id !== anime.id)
-                            );
-                          } catch (err) {
-                            console.error("failed to unlike anime", err);
-                          }
-                        }}
-                      >
-                        <FavoriteIcon color="error" />
-                      </IconButton>
-                    </Box>
-                  );
-                })}
-              </Box>
-
-            </TableBody>
-          </Table>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
+              {likedAnime.map((anime) => (
+                <LikedAnimeCard 
+                  key={anime.id} 
+                  anime={anime} 
+                  onRemove={(id) => setLikedAnime((prev) => prev.filter((a) => a.id !== id))} 
+                />
+              ))}
+            </Box>
         </Paper>
       </Box>
     </Box>
