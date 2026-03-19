@@ -110,7 +110,8 @@ export default function Search() {
       <Box sx={{ marginTop: -2, width: '100%', maxWidth: 400 }}>
         <FormControlLabel
           control={
-            <Checkbox 
+            <Checkbox
+              defaultChecked 
               checked={personalizedResults} 
               onChange={(e) => setPersonalizedResults(e.target.checked)}
             />}
