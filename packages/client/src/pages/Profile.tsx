@@ -37,7 +37,7 @@ export default function Profile() {
   }, []);
 
   const handleChange = async (
-    event: any,
+    _: React.SyntheticEvent,
     newValue: Genre[],
   ) => {
     const added = newValue.filter(
