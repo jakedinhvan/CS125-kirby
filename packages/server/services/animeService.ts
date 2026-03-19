@@ -1,4 +1,4 @@
-import { eq, ilike } from "drizzle-orm";
+import { eq, ilike, and, inArray, ne } from "drizzle-orm";
 import { db } from "..";
 import { animeGenresTable, animeTable, genresTable, likedAnimeTable, visitedPageTable, likedGenreTable } from "../src/db/schema";
 import { Anime } from "@kirby/types";
@@ -144,4 +144,183 @@ export async function searchById(id: number): Promise<Anime | null> {
     description: anime.description,
     genres: [...new Set(anime.animeGenres.map((ag) => ag.genre.name))],
   }
+}
+
+export async function searchSimilarToGenre(gId: number) {
+  const likedGenres = await db
+    .select({ genreId: animeGenresTable.genreId })
+    .from(likedAnimeTable)
+    .innerJoin(
+      animeGenresTable,
+      eq(likedAnimeTable.animeId, animeGenresTable.animeId)
+    );
+
+  const likedGenreIds = new Set(likedGenres.map(g => g.genreId));
+
+  // gets all user liked genres
+  const userLikedGenres = await db
+    .select({ genreId: likedGenreTable.genreId })
+    .from(likedGenreTable);
+
+  const userLikedGenreIds = new Set(userLikedGenres.map(g => g.genreId));
+
+  // gets all genres of visited anime pages
+  const visitedGenres = await db
+    .select({ genreId: animeGenresTable.genreId })
+    .from(visitedPageTable)
+    .innerJoin(
+      animeGenresTable,
+      eq(visitedPageTable.animeId, animeGenresTable.animeId)
+    );
+
+  const visitedGenreIds = new Set(visitedGenres.map(g => g.genreId));
+
+  const animeList = await db.query.animeTable.findMany({
+    where: (anime, { exists, eq }) => 
+      exists(
+        db.select()
+          .from(animeGenresTable)
+          .where(
+            and(
+              eq(animeGenresTable.animeId, anime.id),
+              eq(animeGenresTable.genreId, gId)
+            )
+          )
+      ),
+    with: {
+      animeGenres: {
+        with: {
+          genre: true,
+        },
+      },
+    },
+    limit: 50,
+  });
+
+  const scored = animeList.map((anime) => {
+    let matchScore = 0;
+
+    const genreIds = new Set(anime.animeGenres.map(ag => ag.genreId));
+
+    for (const genreId of genreIds) {
+      if (userLikedGenreIds.has(genreId)) {
+        matchScore += 3;
+      } else if (likedGenreIds.has(genreId)) {
+        matchScore += 2;
+      } else if (visitedGenreIds.has(genreId)) {
+        matchScore += 1;
+      }
+    }
+
+    return {
+      id: anime.id,
+      title: anime.name,
+      seasonYear: anime.seasonYear,
+      description: anime.description,
+      genres: [...new Set(anime.animeGenres.map((ag) => ag.genre.name))],
+      matchScore,
+    };
+  });
+
+  scored.sort((a, b) => b.matchScore - a.matchScore);
+
+  return scored;  
+}
+
+export async function searchSimilarToAnime(aId: number) {
+  const likedGenres = await db
+    .select({ genreId: animeGenresTable.genreId })
+    .from(likedAnimeTable)
+    .innerJoin(
+      animeGenresTable,
+      eq(likedAnimeTable.animeId, animeGenresTable.animeId)
+    );
+
+  const likedGenreIds = new Set(likedGenres.map(g => g.genreId));
+
+  // gets all user liked genres
+  const userLikedGenres = await db
+    .select({ genreId: likedGenreTable.genreId })
+    .from(likedGenreTable);
+
+  const userLikedGenreIds = new Set(userLikedGenres.map(g => g.genreId));
+
+  // gets all genres of visited anime pages
+  const visitedGenres = await db
+    .select({ genreId: animeGenresTable.genreId })
+    .from(visitedPageTable)
+    .innerJoin(
+      animeGenresTable,
+      eq(visitedPageTable.animeId, animeGenresTable.animeId)
+    );
+
+  const visitedGenreIds = new Set(visitedGenres.map(g => g.genreId));
+
+  // get genres of aId
+  const sourceAnime = await db.query.animeTable.findFirst({
+    where: (anime, { eq }) => eq(anime.id, aId),
+    with: {
+      animeGenres: true,
+    },
+  });
+
+  if (!sourceAnime) {
+    return null;
+  }
+  const genreIds = sourceAnime.animeGenres.map(ag => ag.genreId);
+
+  // find anime with 1/+ same genre as source
+  const animeList = await db.query.animeTable.findMany({
+    where: (anime, { exists, eq, ne }) =>
+      and(
+        ne(anime.id, aId),
+        exists(
+          db.select()
+            .from(animeGenresTable)
+            .where(
+              and(
+                eq(animeGenresTable.animeId, anime.id),
+                inArray(animeGenresTable.genreId, genreIds)
+              )
+            )
+        )
+      ),
+    with: {
+      animeGenres: {
+        with: {
+          genre: true,
+        },
+      },
+    },
+    limit: 50,
+  });
+
+  const scored = animeList.map((anime) => {
+    let matchScore = 0;
+
+    const genreIds = new Set(anime.animeGenres.map(ag => ag.genreId));
+
+    for (const genreId of genreIds) {
+      if (userLikedGenreIds.has(genreId)) {
+        matchScore += 3;
+      } else if (likedGenreIds.has(genreId)) {
+        matchScore += 2;
+      } else if (visitedGenreIds.has(genreId)) {
+        matchScore += 1;
+      }
+    }
+
+    return {
+      id: anime.id,
+      title: anime.name,
+      seasonYear: anime.seasonYear,
+      description: anime.description,
+      genres: [...new Set(anime.animeGenres.map((ag) => ag.genre.name))],
+      matchScore,
+    };
+  });
+
+  scored.sort((a, b) => b.matchScore - a.matchScore);
+
+  return scored;    
 }
