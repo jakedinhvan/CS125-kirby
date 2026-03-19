@@ -121,10 +121,33 @@ export default function Search() {
 
 
       {loading && <CircularProgress />}
+      
 
-      {results.map((anime) => (
-        <AnimeCard key={anime.id} anime={anime} liked={likedIds.includes(anime.id)} onToggle={() => handleToggle(anime.id)} />
-      ))}
+      <Box
+        sx={{
+          width: "100%",
+          maxWidth: 1200,
+          mx: "auto",
+          px: 2,
+          display: "grid",
+          gridTemplateColumns: "repeat(3, 1fr)",
+          gap: 3,
+          mt: 2,
+          mb: 4,
+        }}
+      >
+        {results.map((anime) => (
+          <AnimeCard
+            key={anime.id}
+            anime={anime}
+            liked={likedIds.includes(anime.id)}
+            onToggle={() => handleToggle(anime.id)}
+          />
+        ))}
+      </Box>
+
+
+
     </Box>
   );
 }

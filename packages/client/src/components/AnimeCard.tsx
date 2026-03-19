@@ -13,7 +13,7 @@ const AnimeCard = ({
   onToggle: () => void;
 }) => {
   return (
-    <Card variant="outlined" sx={{ width: 480, height: "100%", display: "flex", flexDirection: "column", position: "relative" }}>
+    <Card variant="outlined" sx={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", position: "relative" }}>
       <CardContent>
         <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
           {anime.seasonYear}
