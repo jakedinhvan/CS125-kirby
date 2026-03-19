@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "..";
-import { likedAnimeTable, likedGenreTable, animeTable } from "../src/db/schema";
+import { likedAnimeTable, animeGenresTable, genresTable, animeTable } from "../src/db/schema";
 
 export async function toggleLike(animeId: number) {
   const existing = await db
@@ -28,12 +28,38 @@ export async function getLiked() {
   return liked.map((a) => a.animeId);
 }
 
-// return full anime objects for liked items
 export async function getLikedAnime() {
   const rows = await db
-    .select({ id: animeTable.id, name: animeTable.name })
+    .select({
+      id: animeTable.id,
+      name: animeTable.name,
+      description: animeTable.description,
+      seasonYear: animeTable.seasonYear,
+      genres: genresTable.name,
+    })
     .from(likedAnimeTable)
-    .innerJoin(animeTable, eq(likedAnimeTable.animeId, animeTable.id));
+    .innerJoin(animeTable, eq(likedAnimeTable.animeId, animeTable.id))
+    .leftJoin(animeGenresTable, eq(animeTable.id, animeGenresTable.animeId))
+    .leftJoin(genresTable, eq(animeGenresTable.genreId, genresTable.id));
 
-  return rows.map((r) => ({ id: r.id, name: r.name }));
+
+  const animeMap = new Map<number, any>();
+
+  for (const row of rows) {
+    if (!animeMap.has(row.id)) {
+      animeMap.set(row.id, {
+        id: row.id,
+        name: row.name,
+        seasonYear: row.seasonYear,
+        description: row.description,
+        genres: [],
+      });
+    }
+
+    if (row.genres) {
+      animeMap.get(row.id).genres.push(row.genres);
+    }
+  }
+
+  return Array.from(animeMap.values());
 }
