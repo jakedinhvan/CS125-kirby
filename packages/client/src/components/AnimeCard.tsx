@@ -41,7 +41,7 @@ const AnimeCard = ({
         </Stack>
         
       </CardContent>
-      <CardActions sx={{ justifyContent: 'flex-end', marginTop: -2 }}>
+      <CardActions sx={{ marginTop: -2 }}>
         <IconButton onClick={onToggle}>
           {liked ? (
             <FavoriteIcon color="error" />
