@@ -79,10 +79,10 @@ export async function getAnimeById(req: Request, res: Response){
 
 export async function getSimilarToGenre(req: Request, res: Response) {
   try {
-    const { genreId } = req.body;
+    const genreId = Number(req.params.id);
 
-    if (!genreId) {
-      return res.status(400).json({ error: "genreId required" });
+    if (isNaN(genreId)) {
+      return res.status(400).json({ error: "invalid genreId" });
     }
 
     const result = await animeService.searchSimilarToGenre(genreId);
@@ -95,10 +95,10 @@ export async function getSimilarToGenre(req: Request, res: Response) {
 
 export async function getSimilarToAnime(req: Request, res: Response) {
   try {
-    const { animeId } = req.body;
+    const animeId = Number(req.params.id);
 
     if (!animeId) {
-      return res.status(400).json({ error: "animeId required" });
+      return res.status(400).json({ error: "invalid animeId" });
     }
 
     const result = await animeService.searchSimilarToAnime(animeId);

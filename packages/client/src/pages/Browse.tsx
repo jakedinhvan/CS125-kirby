@@ -7,6 +7,7 @@ import AnimeCarousel from "../components/AnimeCarousel";
 export default function Browse() {
   const [likedAnime, setLikedAnime] = useState<Anime[]>([]);
   const [likedGenres, setLikedGenres] = useState<Genre[]>([]);
+  const [genreRecommendations, setGenreRecommendations] = useState<Record<number, Anime[]>>({});
 
   useEffect(() => {
     axios.get("/api/likes/anime").then((res) => {
@@ -23,6 +24,31 @@ export default function Browse() {
       console.error("failed to fetch liked genres", err);
     });
   }, []);
+
+  useEffect(() => {
+  if (!likedGenres.length) return;
+
+  const fetchAll = async () => {
+    const results: Record<number, Anime[]> = {};
+
+    await Promise.all(
+      likedGenres.map(async (genre) => {
+        try {
+          const res = await axios.get(`/api/anime/similar/genre/${genre.id}`);
+
+          results[genre.id] = res.data;
+        } catch (err) {
+          console.error("failed to fetch similar anime for genre", genre.name, err);
+          results[genre.id] = [];
+        }
+      })
+    );
+
+    setGenreRecommendations(results);
+  };
+
+  fetchAll();
+}, [likedGenres]);
 
 
   return (
@@ -45,9 +71,21 @@ export default function Browse() {
 
         <AnimeCarousel animeList={likedAnime} />
 
-        {likedGenres.map((genre) => (
-          <Typography variant="h4" fontWeight="bold">Because you like {genre.name}...</Typography>
-        ))}
+        {likedGenres.map((genre) => {
+          const list = genreRecommendations[genre.id];
+
+          if (!list) return null;
+
+          return (
+            <Box key={genre.id}>
+              <Typography variant="h4" fontWeight="bold">
+                Because you like {genre.name}...
+              </Typography>
+
+              <AnimeCarousel animeList={list} />
+            </Box>
+          );
+        })}
       </Box>
     </Box>
   )
