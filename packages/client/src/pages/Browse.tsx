@@ -1,12 +1,12 @@
-import type { Anime } from "@kirby/types";
+import { type Genre, type Anime } from "@kirby/types";
 import { Box, Typography } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import AnimeCard from "../components/AnimeCard";
+import AnimeCarousel from "../components/AnimeCarousel";
 
 export default function Browse() {
   const [likedAnime, setLikedAnime] = useState<Anime[]>([]);
-  const [likedIds, setLikedIds] = useState<number[]>([]);
+  const [likedGenres, setLikedGenres] = useState<Genre[]>([]);
 
   useEffect(() => {
     axios.get("/api/likes/anime").then((res) => {
@@ -16,21 +16,14 @@ export default function Browse() {
     });
   }, []);
 
-  const handleToggle = async (id: number) => {
-    const prev = likedIds;
+  useEffect(() => {
+    axios.get("/api/genres/liked").then((res) => {
+      setLikedGenres(res.data);
+    }).catch((err) => {
+      console.error("failed to fetch liked genres", err);
+    });
+  }, []);
 
-    if (prev.includes(id)) {
-      setLikedIds(prev.filter((x) => x !== id));
-    } else {
-      setLikedIds([...prev, id]);
-    }
-
-    try {
-      await axios.post(`/api/likes/anime/${id}`);
-    } catch {
-      setLikedIds(prev);
-    }
-  };
 
   return (
     <Box sx={{
@@ -40,7 +33,7 @@ export default function Browse() {
     }}>
       <Box
         sx={{
-          maxWidth: 900,
+          maxWidth: 1200,
           mx: "auto",
           px: 3,
           display: "flex",
@@ -48,27 +41,13 @@ export default function Browse() {
           gap: 3,
         }}
       >
-        <Typography variant="h4" fontWeight="bold" sx={{}}>Suggested for you</Typography>
+        <Typography variant="h4" fontWeight="bold">Suggested for you</Typography>
 
-        <Box
-          sx={{
-            display: "flex",
-            overflowX: "auto",
-            gap: 2,
-            pb: 1,
-          }}
-        >
-          {likedAnime.map((anime) => (
-            <Box key={anime.id} sx={{ minWidth: 260 }}>
-              <AnimeCard 
-                key={anime.id} 
-                anime={anime} 
-                liked={likedIds.includes(anime.id)}
-                onToggle={() => handleToggle(anime.id)}
-              />
-            </Box>
-          ))}
-        </Box>
+        <AnimeCarousel animeList={likedAnime} />
+
+        {likedGenres.map((genre) => (
+          <Typography variant="h4" fontWeight="bold">Because you like {genre.name}...</Typography>
+        ))}
       </Box>
     </Box>
   )
