@@ -45,7 +45,7 @@ export async function getLikedAnime() {
 
   return liked.map((item) => ({
     id: item.anime.id,
-    name: item.anime.name,
+    title: item.anime.name,
     description: item.anime.description,
     seasonYear: item.anime.seasonYear,
     genres: [...new Set(item.anime.animeGenres.map((ag) => ag.genre.name))],

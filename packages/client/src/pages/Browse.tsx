@@ -2,7 +2,6 @@ import type { Anime } from "@kirby/types";
 import { Box, Typography } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import LikedAnimeCard from "../components/LikedAnimeCard";
 import AnimeCard from "../components/AnimeCard";
 
 export default function Browse() {

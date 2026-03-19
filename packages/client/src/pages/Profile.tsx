@@ -1,11 +1,8 @@
 import type { Anime, Genre } from "@kirby/types";
-import { Box, Chip, IconButton, Stack, Link, Typography, Paper, Autocomplete, TextField, Table, TableHead, TableRow, TableCell, TableBody } from "@mui/material";
+import { Box, Typography, Paper, Autocomplete, TextField } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import AnimeCard from "../components/AnimeCard";
-import FavoriteIcon from "@mui/icons-material/Favorite";
 import LikedAnimeCard from "../components/LikedAnimeCard";
-import { AnimationOutlined } from "@mui/icons-material";
 
 export default function Profile() {
   const [genres, setGenres] = useState<Genre[]>([]);

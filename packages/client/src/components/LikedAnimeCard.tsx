@@ -1,4 +1,4 @@
-import { Box, Card, CardActions, CardContent, Chip, IconButton, Link, Stack } from "@mui/material";
+import { Box, Card, CardContent, Chip, IconButton, Link, Stack } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import type { Anime } from "@kirby/types";
 import axios from "axios";
@@ -29,7 +29,7 @@ export default function LikedAnimeCard({ anime, onRemove }: LikedAnimeCardProps)
             underline="hover"
             sx={{ fontSize: "1.1rem", fontWeight: 500 }}
           >
-            {anime.name}
+            {anime.title}
           </Link>
 
           <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
