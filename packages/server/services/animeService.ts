@@ -1,10 +1,10 @@
 import { eq, ilike } from "drizzle-orm";
 import { db } from "..";
-import { animeGenresTable, animeTable, genresTable, likedAnimeTable } from "../src/db/schema";
+import { animeGenresTable, animeTable, genresTable, likedAnimeTable, visitedPageTable, likedGenreTable } from "../src/db/schema";
 import { Anime } from "@kirby/types";
 
 export async function searchByNamePersonalized(query: string) {
-    // gets all liked genres
+    // gets all liked genres (from their anime likes)
     const likedGenres = await db
       .select({ genreId: animeGenresTable.genreId })
       .from(likedAnimeTable)
@@ -15,6 +15,28 @@ export async function searchByNamePersonalized(query: string) {
 
     const likedGenreIds = [
       ...new Set(likedGenres.map(g => g.genreId))
+    ];
+
+    // gets all user liked genres
+    const userLikedGenres = await db
+      .select({ genreId: likedGenreTable.genreId })
+      .from(likedGenreTable);
+
+    const userLikedGenreIds = [
+      ...new Set(userLikedGenres.map(g => g.genreId))
+    ];
+
+    // gets all genres of visited anime pages
+    const visitedGenres = await db
+      .select({ genreId: animeGenresTable.genreId })
+      .from(visitedPageTable)
+      .innerJoin(
+        animeGenresTable,
+        eq(visitedPageTable.animeId, animeGenresTable.animeId)
+      );
+
+    const visitedGenreIds = [
+      ...new Set(visitedGenres.map(g => g.genreId))
     ];
 
     // gets all of only the search query
@@ -58,11 +80,16 @@ export async function searchByNamePersonalized(query: string) {
       const anime = grouped.get(row.id);
 
       // weighing
+      // user liked genre: 3 pt; user liked anime: 2 pt; visited page: 1 pt
       if (row.genreId) {
         anime.genreIds.push(row.genreId);
 
-        if (likedGenreIds.includes(row.genreId)) {
-          anime.matchScore += 1; // increment per shared genre
+        if (userLikedGenreIds.includes(row.genreId)) {
+          anime.matchScore += 3; // increment per shared genre
+        } else if (likedGenreIds.includes(row.genreId)) {
+          anime.matchScore += 2;
+        } else if (visitedGenreIds.includes(row.genreId)) {
+          anime.matchScore += 1;
         }
       }
 
