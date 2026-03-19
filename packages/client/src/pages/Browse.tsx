@@ -2,11 +2,10 @@ import type { Anime } from "@kirby/types";
 import { Box, Typography } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import AnimeCard from "../components/AnimeCard";
+import AnimeCarousel from "../components/AnimeCarousel";
 
 export default function Browse() {
   const [likedAnime, setLikedAnime] = useState<Anime[]>([]);
-  const [likedIds, setLikedIds] = useState<number[]>([]);
 
   useEffect(() => {
     axios.get("/api/likes/anime").then((res) => {
@@ -16,21 +15,6 @@ export default function Browse() {
     });
   }, []);
 
-  const handleToggle = async (id: number) => {
-    const prev = likedIds;
-
-    if (prev.includes(id)) {
-      setLikedIds(prev.filter((x) => x !== id));
-    } else {
-      setLikedIds([...prev, id]);
-    }
-
-    try {
-      await axios.post(`/api/likes/anime/${id}`);
-    } catch {
-      setLikedIds(prev);
-    }
-  };
 
   return (
     <Box sx={{
@@ -40,7 +24,7 @@ export default function Browse() {
     }}>
       <Box
         sx={{
-          maxWidth: 900,
+          maxWidth: 1200,
           mx: "auto",
           px: 3,
           display: "flex",
@@ -50,25 +34,7 @@ export default function Browse() {
       >
         <Typography variant="h4" fontWeight="bold" sx={{}}>Suggested for you</Typography>
 
-        <Box
-          sx={{
-            display: "flex",
-            overflowX: "auto",
-            gap: 2,
-            pb: 1,
-          }}
-        >
-          {likedAnime.map((anime) => (
-            <Box key={anime.id} sx={{ minWidth: 260 }}>
-              <AnimeCard 
-                key={anime.id} 
-                anime={anime} 
-                liked={likedIds.includes(anime.id)}
-                onToggle={() => handleToggle(anime.id)}
-              />
-            </Box>
-          ))}
-        </Box>
+        <AnimeCarousel animeList={likedAnime} />
       </Box>
     </Box>
   )
