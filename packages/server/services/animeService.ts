@@ -324,3 +324,9 @@ export async function searchSimilarToAnime(aId: number) {
 
   return scored;    
 }
+
+export async function clearAllUserData() {
+  await db.delete(likedAnimeTable);
+  await db.delete(likedGenreTable);
+  await db.delete(visitedPageTable);
+}

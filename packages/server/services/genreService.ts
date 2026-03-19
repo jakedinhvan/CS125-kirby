@@ -35,3 +35,7 @@ export async function getGenreLiked() {
 
   return liked.map((g) => g.genreId);
 }
+
+export async function clearLikedGenres() {
+  await db.delete(likedGenreTable);
+}
