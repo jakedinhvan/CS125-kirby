@@ -1,7 +1,9 @@
 import type { Anime, Genre } from "@kirby/types";
-import { Box, Typography, Paper, Autocomplete, TextField, Table, TableHead, TableRow, TableCell, TableBody } from "@mui/material";
+import { Box, Chip, IconButton, Stack, Link, Typography, Paper, Autocomplete, TextField, Table, TableHead, TableRow, TableCell, TableBody } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import AnimeCard from "../components/AnimeCard";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 
 export default function Profile() {
   const [genres, setGenres] = useState<Genre[]>([]);
@@ -128,15 +130,61 @@ export default function Profile() {
           <Table size="small">
             <TableHead>
               <TableRow>
-                <TableCell>Name</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {likedAnime.map((a) => (
-                <TableRow key={a.id}>
-                  <TableCell>{a.name}</TableCell>
-                </TableRow>
-              ))}
+              
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
+                {likedAnime.map((anime) => {
+                  const genres = anime.genres?.slice(0,3) ?? [];
+
+                  return (
+                    <Box
+                      key={anime.id}
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        p: 2,
+                        border: "1px solid #eee",
+                        borderRadius: 2,
+                      }}
+                    >
+                      <Box>
+                        <Link
+                          href={`/anime/${anime.id}`}
+                          underline="hover"
+                          sx={{ fontSize: "1.1rem", fontWeight: 500 }}
+                        >
+                          {anime.name}
+                        </Link>
+
+                        <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+                          {genres.map((genre) => (
+                            <Chip key={genre} label={genre} size="small" />
+                          ))}
+                        </Stack>
+                      </Box>
+
+                      <IconButton
+                        onClick={async () => {
+                          try {
+                            await axios.post(`/api/kirby/${anime.id}/like`);
+                            setLikedAnime((prev) =>
+                              prev.filter((a) => a.id !== anime.id)
+                            );
+                          } catch (err) {
+                            console.error("failed to unlike anime", err);
+                          }
+                        }}
+                      >
+                        <FavoriteIcon color="error" />
+                      </IconButton>
+                    </Box>
+                  );
+                })}
+              </Box>
+
             </TableBody>
           </Table>
         </Paper>
