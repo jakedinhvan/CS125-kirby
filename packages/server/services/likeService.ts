@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "..";
-import { likedAnimeTable, animeGenresTable, genresTable, animeTable } from "../src/db/schema";
+import { likedAnimeTable, animeGenresTable, genresTable, animeTable, visitedPageTable } from "../src/db/schema";
 
 export async function toggleLike(animeId: number) {
   const existing = await db
@@ -50,4 +50,8 @@ export async function getLikedAnime() {
     seasonYear: item.anime.seasonYear,
     genres: [...new Set(item.anime.animeGenres.map((ag) => ag.genre.name))],
   }));
+}
+
+export async function clearLikedAnimes() {
+  await db.delete(likedAnimeTable);
 }

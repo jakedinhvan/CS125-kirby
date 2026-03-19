@@ -37,3 +37,7 @@ export async function getVisitedPages() {
 
   return rows.map((r) => ({ id: r.id, name: r.name }));
 }
+
+export async function clearVisitedPages() {
+  await db.delete(visitedPageTable);
+}
