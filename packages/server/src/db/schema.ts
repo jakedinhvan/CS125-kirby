@@ -57,3 +57,10 @@ export const animeGenresRelations = relations(animeGenresTable, ({ one }) => ({
 export const genreRelations = relations(genresTable, ({ many }) => ({
   animeGenres: many(animeGenresTable),
 }));
+
+export const likedAnimeRelations = relations(likedAnimeTable, ({ one }) => ({
+  anime: one(animeTable, {
+    fields: [likedAnimeTable.animeId],
+    references: [animeTable.id],
+  }),
+}));

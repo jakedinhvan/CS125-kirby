@@ -29,37 +29,25 @@ export async function getLiked() {
 }
 
 export async function getLikedAnime() {
-  const rows = await db
-    .select({
-      id: animeTable.id,
-      name: animeTable.name,
-      description: animeTable.description,
-      seasonYear: animeTable.seasonYear,
-      genres: genresTable.name,
-    })
-    .from(likedAnimeTable)
-    .innerJoin(animeTable, eq(likedAnimeTable.animeId, animeTable.id))
-    .leftJoin(animeGenresTable, eq(animeTable.id, animeGenresTable.animeId))
-    .leftJoin(genresTable, eq(animeGenresTable.genreId, genresTable.id));
+  const liked = await db.query.likedAnimeTable.findMany({
+    with: {
+      anime: {
+        with: {
+          animeGenres: {
+            with: {
+              genre: true,
+            },
+          },
+        },
+      },
+    },
+  });
 
-
-  const animeMap = new Map<number, any>();
-
-  for (const row of rows) {
-    if (!animeMap.has(row.id)) {
-      animeMap.set(row.id, {
-        id: row.id,
-        name: row.name,
-        seasonYear: row.seasonYear,
-        description: row.description,
-        genres: [],
-      });
-    }
-
-    if (row.genres) {
-      animeMap.get(row.id).genres.push(row.genres);
-    }
-  }
-
-  return Array.from(animeMap.values());
+  return liked.map((item) => ({
+    id: item.anime.id,
+    name: item.anime.name,
+    description: item.anime.description,
+    seasonYear: item.anime.seasonYear,
+    genres: [...new Set(item.anime.animeGenres.map((ag) => ag.genre.name))],
+  }));
 }
