@@ -3,7 +3,7 @@ import { db } from "..";
 import { animeGenresTable, animeTable, genresTable, likedAnimeTable } from "../src/db/schema";
 import { Anime } from "@kirby/types";
 
-export async function searchByName(query: string) {
+export async function searchByNamePersonalized(query: string) {
     // gets all liked genres
     const likedGenres = await db
       .select({ genreId: animeGenresTable.genreId })
@@ -84,7 +84,7 @@ export async function searchByName(query: string) {
     }));        
 }
 
-export async function searchByNameBaseRoute(query: string) {
+export async function searchByName(query: string) {
     // gets all of only the search query
     const animeSearch = await db
       .select({

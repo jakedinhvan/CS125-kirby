@@ -20,6 +20,25 @@ export async function searchName(req: Request, res: Response): Promise<void> {
   }
 }
 
+export async function searchNamePersonalized(req: Request, res: Response): Promise<void> {
+  const query: string | undefined = req.body.query;
+
+  if (!query) {
+    res.status(400).json( {error: "Query required"});
+    return;
+  }
+
+  try {
+    const results = await animeService.searchByNamePersonalized(query);
+    res.json(results);
+  } catch (err: any) {
+    res.status(500).json({
+      error: "Search failed",
+      details: err.message,
+    });
+  }
+}
+
 export async function searchGenre(req: Request, res: Response) {
     const query: string | undefined = req.body.query;
 

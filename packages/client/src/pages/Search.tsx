@@ -1,4 +1,4 @@
-import { Box, CircularProgress, TextField } from "@mui/material";
+import { Box, Checkbox, CircularProgress, FormControlLabel, TextField } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -16,6 +16,7 @@ export default function Search() {
   const [results, setResults] = useState<Anime[]>([]);
   const [loading, setLoading] = useState(false);
   const [likedIds, setLikedIds] = useState<number[]>([]);
+  const [personalizedResults, setPersonalizedResults] = useState(false);
 
   useEffect(() => {
     axios.get("/api/likes/").then((res) => {
@@ -29,12 +30,15 @@ export default function Search() {
 
     navigate(`/search?q=${encodeURIComponent(query)}`, { replace: true });
 
-
     setLoading(true);
     setResults([]);
 
     try {
-      const res = await axios.post('/api/anime/search/name', { query });
+      const endpoint = personalizedResults
+        ? '/api/anime/search/name/personalized'
+        : '/api/anime/search/name';
+
+      const res = await axios.post(endpoint, { query });
       setResults(res.data);
     } catch (err) {
       console.error(err);
@@ -67,6 +71,12 @@ export default function Search() {
     }
   }, [queryParam]);
 
+  useEffect(() => {
+    if (query) {
+      handleSearch();
+    }
+  }, [personalizedResults]);
+
   return (
     <Box sx={{
       minHeight: "100vh",
@@ -95,6 +105,19 @@ export default function Search() {
           fullWidth
         />
       </Box>
+      
+
+      <Box sx={{ marginTop: -2, width: '100%', maxWidth: 400 }}>
+        <FormControlLabel
+          control={
+            <Checkbox 
+              checked={personalizedResults} 
+              onChange={(e) => setPersonalizedResults(e.target.checked)}
+            />}
+          label="Personalize Recommendations"
+        />
+      </Box>
+
 
       {loading && <CircularProgress />}
 
