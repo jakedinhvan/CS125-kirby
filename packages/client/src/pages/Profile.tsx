@@ -49,7 +49,7 @@ export default function Profile() {
     );
 
     for (const genre of added) {
-      await fetch(`/api/genre/like`, {
+      await fetch(`/api/genres/like`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -59,7 +59,7 @@ export default function Profile() {
     }
 
     for (const genre of removed) {
-      await fetch(`/api/genre/like`, {
+      await fetch(`/api/genres/like`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
