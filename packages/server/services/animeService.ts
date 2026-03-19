@@ -1,6 +1,6 @@
 import { eq, ilike } from "drizzle-orm";
 import { db } from "..";
-import { animeGenresTable, animeTable, genresTable, likedAnimeTable } from "../src/db/schema";
+import { animeGenresTable, animeTable, genresTable, likedAnimeTable, visitedPageTable, likedGenreTable } from "../src/db/schema";
 import { Anime } from "@kirby/types";
 
 export async function searchByNamePersonalized(query: string) {
@@ -13,6 +13,24 @@ export async function searchByNamePersonalized(query: string) {
     );
 
   const likedGenreIds = new Set(likedGenres.map(g => g.genreId));
+
+  // gets all user liked genres
+  const userLikedGenres = await db
+    .select({ genreId: likedGenreTable.genreId })
+    .from(likedGenreTable);
+
+  const userLikedGenreIds = new Set(userLikedGenres.map(g => g.genreId));
+
+  // gets all genres of visited anime pages
+  const visitedGenres = await db
+    .select({ genreId: animeGenresTable.genreId })
+    .from(visitedPageTable)
+    .innerJoin(
+      animeGenresTable,
+      eq(visitedPageTable.animeId, animeGenresTable.animeId)
+    );
+
+  const visitedGenreIds = new Set(visitedGenres.map(g => g.genreId));
 
   const animeList = await db.query.animeTable.findMany({
     where: (anime, { ilike }) => ilike(anime.name, `%${query}%`),
@@ -32,8 +50,12 @@ export async function searchByNamePersonalized(query: string) {
     const genreIds = new Set(anime.animeGenres.map(ag => ag.genreId));
 
     for (const genreId of genreIds) {
-      if (likedGenreIds.has(genreId)) {
-        matchScore++;
+      if (userLikedGenreIds.has(genreId)) {
+        matchScore += 3;
+      } else if (likedGenreIds.has(genreId)) {
+        matchScore += 2;
+      } else if (visitedGenreIds.has(genreId)) {
+        matchScore += 1;
       }
     }
 
