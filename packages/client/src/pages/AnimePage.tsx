@@ -1,10 +1,32 @@
 import type { Anime } from "@kirby/types";
 import { Box, Typography, Chip, Stack, Paper } from "@mui/material";
+import { useEffect, useState } from "react";
 import { useLoaderData } from "react-router-dom";
+import AnimeCarousel from "../components/AnimeCarousel";
+import axios from "axios";
 
 export default function AnimePage(){
   const anime = useLoaderData() as Anime;
+  const [similarAnime, setSimilarAnime] = useState<Anime[]>([]);
+  const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    const fetchSimilarAnime = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get(`/api/anime/similar/anime/${anime.id}`);
+        setSimilarAnime(res.data);
+      } catch (err) {
+        console.error("failed to fetch similar anime", err);
+        setSimilarAnime([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSimilarAnime();
+  }, [anime.id]);
+  
   return (
     <Box
       sx={{
@@ -56,6 +78,18 @@ export default function AnimePage(){
         />
 
         </Paper>
+      </Box>
+
+      <Box key={anime.id} sx={{ maxWidth: 1600, mx: "auto", px: 3, mt: 6 }}>
+        <Typography variant="h4" fontWeight="bold">
+          Similar anime...
+        </Typography>
+
+        {loading ? (
+          <Typography>Loading...</Typography>
+        ) : (
+          <AnimeCarousel animeList={similarAnime} />
+        )}
       </Box>
     </Box>
   );
