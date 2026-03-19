@@ -31,7 +31,16 @@ export async function likeGenre(genreId: number) {
 }
 
 export async function getGenreLiked() {
-  const liked = await db.select().from(likedGenreTable);
+  const liked = await db
+    .select({
+      id: genresTable.id,
+      name: genresTable.name,
+    })
+    .from(likedGenreTable)
+    .innerJoin(
+      genresTable,
+      eq(likedGenreTable.genreId, genresTable.id)
+    );
 
-  return liked.map((g) => g.genreId);
+  return liked;
 }
