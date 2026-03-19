@@ -77,11 +77,7 @@ export async function searchByName(query: string) {
 
     return animeRes.map((a) => ({
       id: a.id,
-      title: {
-        romaji: a.name,
-        english: a.name,
-        native: a.name,
-      },
+      title: a.name,
       seasonYear: a.seasonYear,
       genres: a.genres,
       description: a.description,
@@ -143,11 +139,7 @@ export async function searchByNameBaseRoute(query: string) {
 
     return animeRes.map((a) => ({
         id: a.id,
-        title: {
-          romaji: a.name,
-          english: a.name,
-          native: a.name,
-        },
+        title: a.name,
         seasonYear: a.seasonYear,
         genres: a.genres,
         description: a.description,
@@ -176,11 +168,7 @@ export async function searchByGenre(query: string) {
 
   return rows.map((a) => ({
     id: a.id,
-    title: {
-      romaji: a.name,
-      english: a.name,
-      native: a.name,
-    },
+    title: a.name,
     seasonYear: a.seasonYear,
     genres: [query], 
     description: a.description,
@@ -203,11 +191,7 @@ export async function searchById(id: number): Promise<Anime | null> {
 
   return {
     id: anime.id,
-    title: { // @todo: maybe we should just refactor the type to just one name lol
-      romaji: anime.name,
-      english: anime.name,
-      native: anime.name,
-    },
+    title: anime.name,
     seasonYear: anime.seasonYear || 1800,
     description: anime.description,
     genres: anime.animeGenres.map((ag) => ag.genre.name),

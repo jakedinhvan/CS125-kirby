@@ -24,7 +24,7 @@ export default function AnimePage(){
         }}
       >
         <Typography variant="h4" fontWeight="bold">
-          {anime.title.english} ({anime.id})
+          {anime.title} ({anime.id})
         </Typography>
       </Box>
     </Box>

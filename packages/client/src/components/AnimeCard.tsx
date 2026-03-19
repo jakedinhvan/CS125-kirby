@@ -19,7 +19,7 @@ const AnimeCard = ({
           {anime.seasonYear}
         </Typography>
         <Typography variant="h5" component="div" gutterBottom>
-          <Link href={`/anime/${anime.id}`}>{anime.title.romaji || anime.title.english || "Untitled?"}</Link>
+          <Link href={`/anime/${anime.id}`}>{anime.title}</Link>
         </Typography>
 
         <Typography variant="body2"

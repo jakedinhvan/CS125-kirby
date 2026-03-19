@@ -85,16 +85,11 @@ async function fetch() {
     for (const anime of animeList) {
       if (fetchedCount >= MAX_ANIME) break;
 
-      const title =
-        anime.title.english ??
-        anime.title.romaji ??
-        "Unknown Title";
-
       await db
         .insert(animeTable)
         .values({
           id: anime.id,
-          name: title,
+          name: anime.title,
           seasonYear: anime.seasonYear ?? null,
           description: anime.description ?? "No description provided.",
         })
@@ -134,7 +129,7 @@ async function fetch() {
       }
 
       fetchedCount++;
-      console.log(`Inserted: ${title}`);
+      console.log(`Inserted: ${anime.title}`);
     }
 
     page++;
