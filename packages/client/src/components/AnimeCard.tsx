@@ -13,7 +13,7 @@ const AnimeCard = ({
   onToggle: () => void;
 }) => {
   return (
-    <Card variant="outlined" sx={{ width: 480 }}>
+    <Card variant="outlined" sx={{ width: 480, height: "100%", display: "flex", flexDirection: "column", position: "relative" }}>
       <CardContent>
         <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
           {anime.seasonYear}
@@ -30,6 +30,7 @@ const AnimeCard = ({
             overflow: "hidden",
             textOverflow: "ellipsis",
             mb: 1,
+            minHeight: "4.5em",
           }}
           dangerouslySetInnerHTML={{ __html: anime.description ?? "" }}
         />
@@ -41,15 +42,25 @@ const AnimeCard = ({
         </Stack>
         
       </CardContent>
-      <CardActions sx={{ marginTop: -2 }}>
-        <IconButton onClick={onToggle}>
-          {liked ? (
-            <FavoriteIcon color="error" />
-          ) : (
-            <FavoriteBorderIcon />
-          )}
-        </IconButton>
-      </CardActions>
+          <IconButton
+      onClick={onToggle}
+      sx={{
+        position: "absolute",
+        top: 8,
+        right: 8,
+        zIndex: 2,
+        backgroundColor: "background.paper",
+        "&:hover": {
+          backgroundColor: "background.default",
+        },
+      }}
+    >
+      {liked ? (
+        <FavoriteIcon color="error" />
+      ) : (
+        <FavoriteBorderIcon />
+      )}
+    </IconButton>
     </Card>
   );
 };
