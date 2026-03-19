@@ -22,27 +22,27 @@ export default function LikedAnimeCard({ anime, onRemove }: LikedAnimeCardProps)
 
   return (
     <Card variant="outlined">
-      <CardContent>
-        <Link
-          href={`/anime/${anime.id}`}
-          underline="hover"
-          sx={{ fontSize: "1.1rem", fontWeight: 500 }}
-        >
-          {anime.name}
-        </Link>
+      <CardContent sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+        <Box>
+          <Link
+            href={`/anime/${anime.id}`}
+            underline="hover"
+            sx={{ fontSize: "1.1rem", fontWeight: 500 }}
+          >
+            {anime.name}
+          </Link>
 
-        <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-          {genres.map((genre) => (
-            <Chip key={genre} label={genre} size="small" />
-          ))}
-        </Stack>
-      </CardContent>
-      
-      <CardActions sx={{ marginTop: -2 }}>
+          <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+            {genres.map((genre) => (
+              <Chip key={genre} label={genre} size="small" />
+            ))}
+          </Stack>
+        </Box>
+
         <IconButton onClick={handleUnlike}>
           <FavoriteIcon color="error" />
         </IconButton>
-      </CardActions>
+      </CardContent>  
     </Card>
   );
 }
