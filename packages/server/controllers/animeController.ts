@@ -109,6 +109,18 @@ export async function getSimilarToAnime(req: Request, res: Response) {
   }
 }
 
+export async function getRandomLikedRecommendations(req: Request, res: Response) {
+  try {
+    const recs = await animeService.getRandomLikedWithRecommendations();
+    res.json(recs);
+  } catch (err: any) {
+    res.status(500).json({
+      error: "Random recommendations failed",
+      details: err.message,
+    });
+  }
+}
+
 export async function resetUserData(req: Request, res: Response): Promise<void> {
   try {
     const results = await animeService.clearAllUserData();

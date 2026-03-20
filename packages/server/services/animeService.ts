@@ -325,6 +325,34 @@ export async function searchSimilarToAnime(aId: number) {
   return scored;    
 }
 
+export async function getRandomLikedWithRecommendations() {
+  const liked = await db.select().from(likedAnimeTable);
+
+  if (!liked.length) {
+    return null;
+  }
+
+  const random =
+    liked[Math.floor(Math.random() * liked.length)];
+
+  const animeId = random.animeId;
+  const randomAnime = await searchById(animeId);
+
+  let recommendations = await searchSimilarToAnime(animeId) ?? [];
+
+  const likedIds = new Set(liked.map(a => a.animeId));
+  recommendations = recommendations.filter(a => !likedIds.has(a.id));
+
+  recommendations = recommendations
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 20);
+
+  return {
+    randomAnime,
+    recommendations,
+  };
+}
+
 export async function clearAllUserData() {
   await db.delete(likedAnimeTable);
   await db.delete(likedGenreTable);

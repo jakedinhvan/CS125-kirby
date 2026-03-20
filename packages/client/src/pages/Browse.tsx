@@ -8,6 +8,20 @@ export default function Browse() {
   const [likedGenres, setLikedGenres] = useState<Genre[]>([]);
   const [genreRecommendations, setGenreRecommendations] = useState<Record<number, Anime[]>>({});
   const [likedIds, setLikedIds] = useState<number[]>([]);
+  const [randomRecommendation, setRandomRecommendation] = useState<{
+    randomAnime: Anime | null;
+    recommendations: Anime[];
+  }>({ randomAnime: null, recommendations: [] });
+
+  useEffect(() => {
+    axios.get("/api/anime/recommend/random-liked")
+      .then((res) => {
+        setRandomRecommendation(res.data);
+      })
+      .catch((err) => {
+        console.error("failed to fetch random recs", err);
+      });
+  }, []);
 
   useEffect(() => {
     axios.get("/api/likes/").then((res) => {
@@ -67,6 +81,18 @@ export default function Browse() {
       >
         <Typography variant="h4" fontWeight="bold">Suggested for you</Typography>
 
+        {randomRecommendation.randomAnime && (
+        <Box>
+          <Typography variant="h5" fontWeight="bold" sx={{ mb: 2 }}>
+            Because you liked {randomRecommendation.randomAnime.title}...
+          </Typography>
+
+          <AnimeCarousel
+            animeList={randomRecommendation.recommendations}
+            likedIds={likedIds}
+          />
+        </Box>
+      )}
         {likedGenres.map((genre) => {
           const list = genreRecommendations[genre.id];
 
