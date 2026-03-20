@@ -1,8 +1,8 @@
-import { Box, Checkbox, CircularProgress, FormControlLabel, TextField } from "@mui/material";
+import { Autocomplete, Box, Checkbox, CircularProgress, FormControlLabel, TextField } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import type { Anime } from '@kirby/types';
+import type { Anime, Genre } from '@kirby/types';
 import AnimeCard from "../components/AnimeCard";
 
 export default function Search() {
@@ -17,6 +17,14 @@ export default function Search() {
   const [loading, setLoading] = useState(false);
   const [likedIds, setLikedIds] = useState<number[]>([]);
   const [personalizedResults, setPersonalizedResults] = useState(true);
+  const [genres, setGenres] = useState<Genre[]>([]);
+  const [genreQuery, setGenreQuery] = useState<Genre | null>(null);
+
+  useEffect(() => {
+    axios.get("/api/genres").then((res) => {
+      setGenres(res.data);
+    });
+  }, []);
 
   useEffect(() => {
     axios.get("/api/likes/").then((res) => {
@@ -36,6 +44,23 @@ export default function Search() {
         : "/api/anime/search/name";
 
       const res = await axios.post(endpoint, { query: searchQuery });
+      setResults(res.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const runGenreSearch = async (genreName: string) => {
+    setLoading(true);
+    setResults([]);
+
+    try {
+      const res = await axios.post("/api/anime/search/genre", {
+        query: genreName,
+      });
+
       setResults(res.data);
     } catch (err) {
       console.error(err);
@@ -104,6 +129,28 @@ export default function Search() {
           fullWidth
         />
       </Box>
+
+      <Autocomplete
+        options={genres}
+        getOptionLabel={(g) => g.name}
+        value={genreQuery}
+        onChange={(_, value) => {
+          setGenreQuery(value);
+
+          if (value) {
+            runGenreSearch(value.name);
+          }
+        }}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Search by genre"
+            variant="outlined"
+            fullWidth
+          />
+        )}
+        sx={{ width: "100%", maxWidth: 400 }}
+      />
       
 
       <Box sx={{ marginTop: -2, width: '100%', maxWidth: 400 }}>
