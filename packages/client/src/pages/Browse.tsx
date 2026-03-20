@@ -81,7 +81,8 @@ export default function Browse() {
       >
         <Typography variant="h4" fontWeight="bold">Suggested for you</Typography>
 
-        {randomRecommendation.randomAnime && (
+        {!randomRecommendation && likedGenres.length === 0 && <Typography variant="h5">No suggestions found. Try liking some genres or anime! </Typography>}
+        {randomRecommendation?.randomAnime && (
         <Box>
           <Typography variant="h5" fontWeight="bold" sx={{ mb: 2 }}>
             Because you liked {randomRecommendation.randomAnime.title}...
