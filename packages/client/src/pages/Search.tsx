@@ -16,7 +16,7 @@ export default function Search() {
   const [results, setResults] = useState<Anime[]>([]);
   const [loading, setLoading] = useState(false);
   const [likedIds, setLikedIds] = useState<number[]>([]);
-  const [personalizedResults, setPersonalizedResults] = useState(false);
+  const [personalizedResults, setPersonalizedResults] = useState(true);
 
   useEffect(() => {
     axios.get("/api/likes/").then((res) => {
@@ -24,27 +24,32 @@ export default function Search() {
     });
   }, []);
 
-  const handleSearch = async (e?: React.FormEvent<HTMLFormElement>) => {
-    e?.preventDefault();
-    if (!query) return;
-
-    navigate(`/search?q=${encodeURIComponent(query)}`, { replace: true });
+  const runSearch = async (searchQuery: string) => {
+    if (!searchQuery) return;
 
     setLoading(true);
     setResults([]);
 
     try {
       const endpoint = personalizedResults
-        ? '/api/anime/search/name/personalized'
-        : '/api/anime/search/name';
+        ? "/api/anime/search/name/personalized"
+        : "/api/anime/search/name";
 
-      const res = await axios.post(endpoint, { query });
+      const res = await axios.post(endpoint, { query: searchQuery });
       setResults(res.data);
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSearch = async (e?: React.FormEvent<HTMLFormElement>) => {
+    e?.preventDefault();
+    if (!query) return;
+
+    navigate(`/search?q=${encodeURIComponent(query)}`, { replace: true });
+    await runSearch(query);
   };
 
   const handleToggle = async (id: number) => {
@@ -63,19 +68,13 @@ export default function Search() {
     }
   };
 
-
   useEffect(() => {
+    setQuery(queryParam);
+
     if (queryParam) {
-      setQuery(queryParam);
-      handleSearch();
+      runSearch(queryParam);
     }
-  }, [queryParam]);
-
-  useEffect(() => {
-    if (query) {
-      handleSearch();
-    }
-  }, [personalizedResults]);
+  }, [queryParam, personalizedResults]);
 
   return (
     <Box sx={{
@@ -111,7 +110,6 @@ export default function Search() {
         <FormControlLabel
           control={
             <Checkbox
-              defaultChecked 
               checked={personalizedResults} 
               onChange={(e) => setPersonalizedResults(e.target.checked)}
             />}
