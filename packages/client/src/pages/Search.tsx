@@ -153,7 +153,7 @@ export default function Search() {
       />
       
 
-      <Box sx={{ marginTop: -2, width: '100%', maxWidth: 400 }}>
+      {!genreQuery && <Box sx={{ marginTop: -2, width: '100%', maxWidth: 400 }}>
         <FormControlLabel
           control={
             <Checkbox
@@ -162,7 +162,7 @@ export default function Search() {
             />}
           label="Personalize Recommendations"
         />
-      </Box>
+      </Box>}
 
 
       {loading && <CircularProgress />}
