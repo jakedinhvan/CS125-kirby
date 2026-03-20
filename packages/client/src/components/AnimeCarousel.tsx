@@ -17,7 +17,7 @@ const AnimeCarousel = ({ animeList, likedIds }: AnimeCarouselProps) => {
   }, [likedIds]);
 
   const handleToggle = async (id: number) => {
-    const prev = likedIds;
+    const prev = localLikedIds;
 
     if (prev.includes(id)) {
       setLocalLikedIds(prev.filter((x) => x !== id));
