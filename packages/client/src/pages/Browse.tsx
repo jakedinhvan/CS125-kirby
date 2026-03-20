@@ -5,18 +5,9 @@ import { useEffect, useState } from "react";
 import AnimeCarousel from "../components/AnimeCarousel";
 
 export default function Browse() {
-  const [likedAnime, setLikedAnime] = useState<Anime[]>([]);
   const [likedGenres, setLikedGenres] = useState<Genre[]>([]);
   const [genreRecommendations, setGenreRecommendations] = useState<Record<number, Anime[]>>({});
   const [likedIds, setLikedIds] = useState<number[]>([]);
-
-  useEffect(() => {
-    axios.get("/api/likes/anime").then((res) => {
-      setLikedAnime(res.data);
-    }).catch((err) => {
-      console.error("failed to fetch liked anime", err);
-    });
-  }, []);
 
   useEffect(() => {
     axios.get("/api/likes/").then((res) => {
@@ -76,8 +67,6 @@ export default function Browse() {
       >
         <Typography variant="h4" fontWeight="bold">Suggested for you</Typography>
 
-        <AnimeCarousel animeList={likedAnime} likedIds={likedIds} />
-
         {likedGenres.map((genre) => {
           const list = genreRecommendations[genre.id];
 
@@ -85,7 +74,7 @@ export default function Browse() {
 
           return (
             <Box key={genre.id}>
-              <Typography variant="h4" fontWeight="bold" sx={{ mb: 2 }}>
+              <Typography variant="h5" fontWeight="bold" sx={{ mb: 2 }}>
                 Because you like {genre.name}...
               </Typography>
 
