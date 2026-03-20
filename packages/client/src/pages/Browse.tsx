@@ -8,7 +8,7 @@ export default function Browse() {
   const [likedAnime, setLikedAnime] = useState<Anime[]>([]);
   const [likedGenres, setLikedGenres] = useState<Genre[]>([]);
   const [genreRecommendations, setGenreRecommendations] = useState<Record<number, Anime[]>>({});
-
+ 
   useEffect(() => {
     axios.get("/api/likes/anime").then((res) => {
       setLikedAnime(res.data);
@@ -78,7 +78,7 @@ export default function Browse() {
 
           return (
             <Box key={genre.id}>
-              <Typography variant="h4" fontWeight="bold">
+              <Typography variant="h4" fontWeight="bold" sx={{ mb: 2 }}>
                 Because you like {genre.name}...
               </Typography>
 

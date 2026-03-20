@@ -38,8 +38,8 @@ const AnimeCarousel = ({ animeList }: AnimeCarouselProps) => {
     >
       {animeList.map((anime) => (
         <Box key={anime.id} sx={{ 
-          flex: "0 0 240px", 
-          height: 230,
+          flex: "0 0 300px", 
+          height: 320,
         }}>
           <AnimeCard
             anime={anime} 
