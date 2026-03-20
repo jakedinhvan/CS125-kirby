@@ -2,22 +2,16 @@ import { eq } from "drizzle-orm";
 import { db } from "..";
 import { animeTable, visitedPageTable } from "../src/db/schema";
 
-export async function toggleVisit(animeId: number) {
+export async function markVisited(animeId: number) {
   const existing = await db
     .select()
     .from(visitedPageTable)
     .where(eq(visitedPageTable.animeId, animeId))
     .limit(1);
 
-  if (existing.length) {
-    await db
-      .delete(visitedPageTable)
-      .where(eq(visitedPageTable.animeId, animeId));
-
-    return false;
+  if (!existing.length) {
+    await db.insert(visitedPageTable).values({ animeId });
   }
-
-  await db.insert(visitedPageTable).values({ animeId });
 
   return true;
 }

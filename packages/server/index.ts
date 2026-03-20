@@ -5,6 +5,7 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import animeRoutes from "./routes/animeRoutes";
 import genreRoutes from "./routes/genreRoutes";
 import likeRoutes from "./routes/likeRoutes";
+import visitRoutes from "./routes/visitRoutes";
 import * as schema from "./src/db/schema";
 
 const app = express();
@@ -21,6 +22,7 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/api/anime", animeRoutes); 
 app.use('/api/genres', genreRoutes);
 app.use('/api/likes', likeRoutes);
+app.use('/api/visits', visitRoutes);
 
 app.listen(3000, () => {
   console.log("Server running at http://localhost:3000");

@@ -9,6 +9,7 @@ export default function AnimePage(){
   const anime = useLoaderData() as Anime;
   const [similarAnime, setSimilarAnime] = useState<Anime[]>([]);
   const [loading, setLoading] = useState(false);
+  const [likedIds, setLikedIds] = useState<number[]>([]);
 
   useEffect(() => {
     const fetchSimilarAnime = async () => {
@@ -26,6 +27,24 @@ export default function AnimePage(){
 
     fetchSimilarAnime();
   }, [anime.id]);
+
+  useEffect(() => {
+    axios.get("/api/likes/").then((res) => {
+      setLikedIds(res.data);
+    });
+  }, []);
+
+  useEffect(() => {
+    const markVisited = async () => {
+      try {
+        await axios.post(`/api/visits/anime/${anime.id}`);
+      } catch (err) {
+        console.error("failed to track visit", err);
+      }
+    };
+
+    markVisited();
+}, [anime.id]);
   
   return (
     <Box
@@ -88,7 +107,7 @@ export default function AnimePage(){
         {loading ? (
           <Typography>Loading...</Typography>
         ) : (
-          <AnimeCarousel animeList={similarAnime} />
+          <AnimeCarousel likedIds={likedIds} animeList={similarAnime} />
         )}
       </Box>
     </Box>

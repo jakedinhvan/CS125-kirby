@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import * as visitService from '../services/visitService';
 
-export async function toggleVisit(req: Request, res: Response) {
+export async function markVisited(req: Request, res: Response) {
   const animeId = Number(req.params.id);
 
   try {
-    const visited = await visitService.toggleVisit(animeId);
-    res.json({ visited });
+    await visitService.markVisited(animeId);
+    res.json({ success: true });
   } catch (err: any) {
     res.status(500).json({
       error: "Toggle failed",
