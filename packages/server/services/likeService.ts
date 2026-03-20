@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "..";
-import { likedAnimeTable, animeGenresTable, genresTable, animeTable, visitedPageTable } from "../src/db/schema";
+import { likedAnimeTable, animeGenresTable, genresTable, animeTable, visitedPageTable, likedGenreTable } from "../src/db/schema";
 
 export async function toggleLike(animeId: number) {
   const existing = await db
@@ -18,6 +18,25 @@ export async function toggleLike(animeId: number) {
   }
 
   await db.insert(likedAnimeTable).values({ animeId });
+
+  const anime = await db.query.animeTable.findFirst({
+    where: (anime, { eq }) => eq(anime.id, animeId),
+    with: {
+      animeGenres: true,
+    },
+  });
+
+  const genreValues =
+    anime?.animeGenres.map((ag) => ({
+      genreId: ag.genreId,
+    })) ?? [];
+
+  if (genreValues.length) {
+    await db
+      .insert(likedGenreTable)
+      .values(genreValues)
+      .onConflictDoNothing();
+  }
 
   return true;
 }

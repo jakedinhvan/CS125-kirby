@@ -20,13 +20,10 @@ export default function Profile() {
   useEffect(() => {
     fetch("/api/genres/liked")
       .then(res => res.json())
-      .then((likedIds: number[]) => {
-        const likedObjects = genres.filter(g =>
-          likedIds.includes(g.id)
-        );
-        setLikedGenres(likedObjects);
+      .then((liked: Genre[]) => {
+        setLikedGenres(liked);
       });
-}, [genres]);
+}, []);
 
   useEffect(() => {
     axios.get("/api/likes/anime").then((res) => {
