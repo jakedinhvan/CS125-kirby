@@ -108,3 +108,15 @@ export async function getSimilarToAnime(req: Request, res: Response) {
     res.status(500).json({ error: "failed to fetch similar anime" });
   }
 }
+
+export async function resetUserData(req: Request, res: Response): Promise<void> {
+  try {
+    const results = await animeService.clearAllUserData();
+    res.json(results);
+  } catch (err: any) {
+    res.status(500).json({
+      error: "Reset failed",
+      details: err.message,
+    });
+  }
+}

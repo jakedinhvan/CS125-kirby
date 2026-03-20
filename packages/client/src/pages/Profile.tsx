@@ -1,5 +1,5 @@
 import type { Anime, Genre } from "@kirby/types";
-import { Box, Typography, Paper, Autocomplete, TextField } from "@mui/material";
+import { Box, Typography, Paper, Autocomplete, TextField, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import LikedAnimeCard from "../components/LikedAnimeCard";
@@ -8,6 +8,7 @@ export default function Profile() {
   const [genres, setGenres] = useState<Genre[]>([]);
   const [likedGenres, setLikedGenres] = useState<Genre[]>([]);
   const [likedAnime, setLikedAnime] = useState<Anime[]>([]);
+  const [personalizationDialogOpen, setPersonalizationDialogOpen] = useState(false);
 
 
   useEffect(() => {
@@ -69,6 +70,22 @@ export default function Profile() {
 
     setLikedGenres(newValue);
   };
+
+  const handleDialogOpen = () => {
+    setPersonalizationDialogOpen(true);
+  }
+
+  const handleResetUserData = async () => {
+    try {
+      await axios.post("/api/anime/clearUserData");
+
+      setLikedAnime([]);
+      setLikedGenres([]);
+      setPersonalizationDialogOpen(false);
+    } catch (err) {
+      console.error("failed to reset personalization data", err);
+    }
+  }
   
   return (
     <Box
@@ -136,7 +153,33 @@ export default function Profile() {
               ))}
             </Box>
         </Paper>
+
+        <Paper
+          elevation={1}
+          sx={{
+            p: 3,
+            borderRadius: 3,
+          }}
+        >
+          <Typography variant="h6">Data & Privacy</Typography>
+
+          <Button sx={{ mt: 2 }} variant="contained" color="error" onClick={handleDialogOpen}>
+            Reset personalization data
+          </Button>
+
+        </Paper>
       </Box>
+
+      <Dialog open={personalizationDialogOpen}>
+        <DialogTitle>Are you sure you want to reset your personalization data?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>This will clear your liked anime, liked genres, and viewed anime.</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="text" color="inherit" onClick={() => setPersonalizationDialogOpen(false)}>Cancel</Button>
+          <Button variant="contained" color="error" onClick={handleResetUserData}>I am sure</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

@@ -1,4 +1,4 @@
-import { Box, Card, CardActions, CardContent, Chip, IconButton, Link, Stack, Typography } from "@mui/material";
+import { Box, Card, CardContent, Chip, IconButton, Link, Typography } from "@mui/material";
 import type { Anime } from "@kirby/types";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
