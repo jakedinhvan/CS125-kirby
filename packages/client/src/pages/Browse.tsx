@@ -8,12 +8,19 @@ export default function Browse() {
   const [likedAnime, setLikedAnime] = useState<Anime[]>([]);
   const [likedGenres, setLikedGenres] = useState<Genre[]>([]);
   const [genreRecommendations, setGenreRecommendations] = useState<Record<number, Anime[]>>({});
- 
+  const [likedIds, setLikedIds] = useState<number[]>([]);
+
   useEffect(() => {
     axios.get("/api/likes/anime").then((res) => {
       setLikedAnime(res.data);
     }).catch((err) => {
       console.error("failed to fetch liked anime", err);
+    });
+  }, []);
+
+  useEffect(() => {
+    axios.get("/api/likes/").then((res) => {
+      setLikedIds(res.data);
     });
   }, []);
 
@@ -69,7 +76,7 @@ export default function Browse() {
       >
         <Typography variant="h4" fontWeight="bold">Suggested for you</Typography>
 
-        <AnimeCarousel animeList={likedAnime} />
+        <AnimeCarousel animeList={likedAnime} likedIds={likedIds} />
 
         {likedGenres.map((genre) => {
           const list = genreRecommendations[genre.id];
@@ -82,7 +89,7 @@ export default function Browse() {
                 Because you like {genre.name}...
               </Typography>
 
-              <AnimeCarousel animeList={list} />
+              <AnimeCarousel animeList={list} likedIds={likedIds} />
             </Box>
           );
         })}

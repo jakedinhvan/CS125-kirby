@@ -1,29 +1,34 @@
 import type { Anime } from "@kirby/types";
 import { Box } from "@mui/material";
 import AnimeCard from "./AnimeCard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 interface AnimeCarouselProps {
   animeList: Anime[];
+  likedIds: number[];
 }
 
-const AnimeCarousel = ({ animeList }: AnimeCarouselProps) => {
-  const [likedIds, setLikedIds] = useState<number[]>([]);
+const AnimeCarousel = ({ animeList, likedIds }: AnimeCarouselProps) => {
+  const [localLikedIds, setLocalLikedIds] = useState<number[]>([]);
+
+  useEffect(() => {
+    setLocalLikedIds(likedIds);
+  }, [likedIds]);
 
   const handleToggle = async (id: number) => {
     const prev = likedIds;
 
     if (prev.includes(id)) {
-      setLikedIds(prev.filter((x) => x !== id));
+      setLocalLikedIds(prev.filter((x) => x !== id));
     } else {
-      setLikedIds([...prev, id]);
+      setLocalLikedIds([...prev, id]);
     }
 
     try {
       await axios.post(`/api/likes/anime/${id}`);
     } catch {
-      setLikedIds(prev);
+      setLocalLikedIds(prev);
     }
   };
   
@@ -43,7 +48,7 @@ const AnimeCarousel = ({ animeList }: AnimeCarouselProps) => {
         }}>
           <AnimeCard
             anime={anime} 
-            liked={likedIds.includes(anime.id)}
+            liked={localLikedIds.includes(anime.id)}
             onToggle={() => handleToggle(anime.id)}
           />
         </Box>
